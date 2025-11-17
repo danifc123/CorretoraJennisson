@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using CorretoraJenissonLuckwuAPI.EFModel.Entities;
+using CorretoraJenissonLuckwuAPI.Models.Entities;
 using CorretoraJenissonLuckwuAPI.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

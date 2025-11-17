@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace CorretoraJenissonLuckwuAPI.EFModel.Entities
+namespace CorretoraJenissonLuckwuAPI.Models.Entities
 {
   public class Usuario
   {

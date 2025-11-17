@@ -1,4 +1,4 @@
-﻿using CorretoraJenissonLuckwuAPI.Models;
+﻿using CorretoraJenissonLuckwuAPI.Models.Entities;
 using CorretoraJenissonLuckwuAPI.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

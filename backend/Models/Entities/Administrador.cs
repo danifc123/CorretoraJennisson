@@ -1,17 +1,21 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
-namespace CorretoraJenissonLuckwuAPI.Entities
+namespace CorretoraJenissonLuckwuAPI.Models.Entities
 {
-    public class Usuario
+    public class Administrador
     {
-        #region Id
+        #region Key
         [Key]
         public int Id { get; set; }
         #endregion
 
-
         #region Properties
+        [Required]
+        public required string Nome { get; set; }
+
+        [Phone]
+        public string? Telefone { get; set; }
+
         [Required]
         [EmailAddress]
         public string Email { get; set; }
@@ -22,18 +26,14 @@ namespace CorretoraJenissonLuckwuAPI.Entities
         [Required]
         public string Stream_user_id { get; set; }
 
-        [Phone]
-        public string Telefone { get; set; }
+        public string? ID_PFPJ { get; set; }
+
         #endregion
 
-        #region Generated Data
+        #region Generated Data (Backend logic)
         public DateTime Created_at { get; set; } = DateTime.UtcNow;
 
         public DateTime Updated_at { get; set; } = DateTime.UtcNow;
-        #endregion
-
-        #region Navigation Properties
-        public virtual ICollection<Favorito> Favoritos { get; set; } = new List<Favorito>();
         #endregion
     }
 }

@@ -1,4 +1,4 @@
-using CorretoraJenissonLuckwuAPI.EFModel.Entities;
+using CorretoraJenissonLuckwuAPI.Models.Entities;
 using CorretoraJenissonLuckwuAPI.Repository;
 
 namespace CorretoraJenissonLuckwuAPI.Services
@@ -27,7 +27,10 @@ namespace CorretoraJenissonLuckwuAPI.Services
         public async Task<Usuario?> Add(Usuario usuario)
         {
             // Hash da senha antes de salvar
-            usuario.Senha = _passwordService.HashPassword(usuario.Senha);
+            if (!string.IsNullOrEmpty(usuario.Senha))
+            {
+                usuario.Senha = _passwordService.HashPassword(usuario.Senha);
+            }
             return await _repository.AddAsync(usuario);
         }
 

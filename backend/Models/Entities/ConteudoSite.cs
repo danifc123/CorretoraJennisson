@@ -1,7 +1,7 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace CorretoraJenissonLuckwuAPI.EFModel.Entities
+namespace CorretoraJenissonLuckwuAPI.Models.Entities
 {
   public class ConteudoSite
   {

@@ -1,10 +1,10 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace CorretoraJenissonLuckwuAPI.Entities
+namespace CorretoraJenissonLuckwuAPI.Models.Entities
 {
     public enum StatusImovel
-{
+    {
     Disponivel,
     Vendido,
     Alugado
@@ -61,3 +61,4 @@ public enum TipoImovel
         #endregion
     }
 }
+

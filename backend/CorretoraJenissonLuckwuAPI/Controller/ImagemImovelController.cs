@@ -1,5 +1,5 @@
 using System.Linq;
-using CorretoraJenissonLuckwuAPI.EFModel.Entities;
+using CorretoraJenissonLuckwuAPI.Models.Entities;
 using CorretoraJenissonLuckwuAPI.Infrastructure;
 using CorretoraJenissonLuckwuAPI.Services;
 using Microsoft.AspNetCore.Authorization;

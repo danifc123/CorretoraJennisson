@@ -1,5 +1,5 @@
 using CorretoraJenissonLuckwuAPI.EFModel.Configurations;
-using CorretoraJenissonLuckwuAPI.EFModel.Entities;
+using CorretoraJenissonLuckwuAPI.Models.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace CorretoraJenissonLuckwuAPI.Repository

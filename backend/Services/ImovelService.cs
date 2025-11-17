@@ -1,4 +1,4 @@
-using CorretoraJenissonLuckwuAPI.EFModel.Entities;
+using CorretoraJenissonLuckwuAPI.Models.Entities;
 using CorretoraJenissonLuckwuAPI.Repository;
 
 namespace CorretoraJenissonLuckwuAPI.Services
