@@ -67,6 +67,16 @@ export class Sobre {
       icon: 'home_work',
       title: 'Portfólio Diversificado',
       description: 'Mais de 30 imóveis ativos para venda e locação'
+    },
+    {
+      icon: 'phone_in_talk',
+      title: 'Disponibilidade Total',
+      description: 'Atendimento ágil e suporte contínuo para esclarecer suas dúvidas a qualquer momento'
+    },
+    {
+      icon: 'description',
+      title: 'Documentação Completa',
+      description: 'Assessoria completa na documentação e regularização de todos os processos legais'
     }
   ];
 
