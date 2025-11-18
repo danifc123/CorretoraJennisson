@@ -119,15 +119,71 @@
       }
 
       .texto-destaque {
-        font-size: $font-size-xl;
-        font-weight: $font-weight-medium;
-        color: $primary-color;
-        font-style: italic;
-        padding: $spacing-lg 0;
-        border-top: 2px solid $bg-secondary;
-        border-bottom: 2px solid $bg-secondary;
-        margin: $spacing-2xl 0;
-        text-align: center;
+        margin: $spacing-3xl 0;
+        padding: $spacing-2xl $spacing-3xl;
+        padding-left: calc($spacing-3xl + 12px);
+        background: rgba($secondary-color, 0.02);
+        position: relative;
+        border-radius: $border-radius;
+
+        @media (max-width: $breakpoint-md) {
+          padding: $spacing-xl $spacing-lg;
+          padding-left: calc($spacing-lg + 10px);
+        }
+
+        &::before {
+          content: "";
+          position: absolute;
+          left: $spacing-lg;
+          top: $spacing-md;
+          bottom: $spacing-md;
+          width: 6px;
+          background: linear-gradient(to bottom, $secondary-color, $primary-color);
+          border-radius: 3px;
+          box-shadow: 0 0 10px rgba($secondary-color, 0.4);
+
+          @media (max-width: $breakpoint-md) {
+            width: 4px;
+            left: $spacing-md;
+          }
+        }
+
+        &::after {
+          content: '"';
+          position: absolute;
+          top: -10px;
+          left: 40px;
+          font-size: 5rem;
+          color: rgba(black, 0.15);
+          font-family: Georgia, serif;
+          line-height: 1;
+          font-weight: bold;
+
+          @media (max-width: $breakpoint-md) {
+            font-size: 4rem;
+            left: 30px;
+          }
+        }
+
+        p {
+          margin: 0;
+          font-size: $font-size-xl;
+          line-height: 1.8;
+          color: $text-color;
+          font-style: italic;
+          position: relative;
+          z-index: 1;
+
+          @media (max-width: $breakpoint-md) {
+            font-size: $font-size-lg;
+          }
+
+          strong {
+            color: $secondary-color;
+            font-weight: $font-weight-bold;
+            font-style: normal;
+          }
+        }
       }
     }
 
@@ -335,259 +391,258 @@
   position: relative;
 }
 
-  .container {
-    position: relative;
-    z-index: 1;
-  }
+.container {
+  position: relative;
+  z-index: 1;
+}
 
-  .valores-header-section {
-    text-align: center;
-    margin-bottom: $spacing-3xl;
+.valores-header-section {
+  text-align: center;
+  margin-bottom: $spacing-3xl;
 
-    .section-title {
-      font-size: 2.5rem;
-      font-weight: $font-weight-bold;
-      color: $primary-color;
-      margin-bottom: $spacing-md;
+  .section-title {
+    font-size: 2.5rem;
+    font-weight: $font-weight-bold;
+    color: $primary-color;
+    margin-bottom: $spacing-md;
 
-      @media (max-width: $breakpoint-md) {
-        font-size: 2rem;
-      }
-    }
-
-    .section-subtitle {
-      font-size: $font-size-lg;
-      color: $text-muted;
-      max-width: 600px;
-      margin: 0 auto;
+    @media (max-width: $breakpoint-md) {
+      font-size: 2rem;
     }
   }
 
-  .valores-container {
-    width: 1500px;
-
+  .section-subtitle {
+    font-size: $font-size-lg;
+    color: $text-muted;
+    max-width: 600px;
     margin: 0 auto;
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: $spacing-lg;
+  }
+}
 
-    @media (max-width: $breakpoint-lg) {
-      grid-template-columns: 1fr;
-      max-width: 700px;
-      gap: $spacing-md;
+.valores-container {
+  width: 1500px;
+
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: $spacing-lg;
+
+  @media (max-width: $breakpoint-lg) {
+    grid-template-columns: 1fr;
+    max-width: 700px;
+    gap: $spacing-md;
+  }
+}
+
+.valor-item {
+  background: white;
+  border-radius: $border-radius-xl;
+  border: 2px solid #e8edf2;
+  overflow: hidden;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+
+  &:hover {
+    border-color: #d0d9e3;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+    transform: translateY(-2px);
+  }
+
+  &.ativo {
+    border-color: $primary-color;
+    box-shadow: 0 12px 40px rgba($primary-color, 0.12);
+    transform: scale(1.01);
+
+    .valor-trigger {
+      background: linear-gradient(to right, rgba($primary-color, 0.02), transparent);
+    }
+
+    .valor-numero {
+      transform: scale(1.1);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .valor-titulo {
+      color: $primary-color;
+    }
+
+    .valor-toggle {
+      background: $primary-color;
+      color: white;
+      transform: rotate(180deg);
     }
   }
 
-  .valor-item {
-    background: white;
-    border-radius: $border-radius-xl;
-    border: 2px solid #e8edf2;
-    overflow: hidden;
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    cursor: pointer;
+  &:focus-visible {
+    outline: 3px solid $primary-color;
+    outline-offset: 4px;
+  }
+}
 
-    &:hover {
-      border-color: #d0d9e3;
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
-      transform: translateY(-2px);
-    }
+.valor-trigger {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: $spacing-lg;
+  padding: $spacing-xl;
+  transition: all 0.3s ease;
 
-    &.ativo {
-      border-color: $primary-color;
-      box-shadow: 0 12px 40px rgba($primary-color, 0.12);
-      transform: scale(1.01);
+  @media (max-width: $breakpoint-sm) {
+    gap: $spacing-md;
+    padding: $spacing-lg;
+  }
+}
 
-      .valor-trigger {
-        background: linear-gradient(to right, rgba($primary-color, 0.02), transparent);
-      }
+.valor-numero {
+  width: 56px;
+  height: 56px;
+  border-radius: $border-radius-lg;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: $font-size-2xl;
+  font-weight: $font-weight-bold;
+  color: white;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 
-      .valor-numero {
-        transform: scale(1.1);
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-      }
+  @media (max-width: $breakpoint-sm) {
+    width: 48px;
+    height: 48px;
+    font-size: $font-size-xl;
+  }
+}
 
-      .valor-titulo {
-        color: $primary-color;
-      }
+.valor-info {
+  min-width: 0;
+}
 
-      .valor-toggle {
-        background: $primary-color;
-        color: white;
-        transform: rotate(180deg);
-      }
-    }
+.valor-titulo {
+  font-size: $font-size-xl;
+  font-weight: $font-weight-bold;
+  color: $text-color;
+  margin: 0 0 $spacing-xs 0;
+  transition: color 0.3s ease;
 
-    &:focus-visible {
-      outline: 3px solid $primary-color;
-      outline-offset: 4px;
-    }
+  @media (max-width: $breakpoint-sm) {
+    font-size: $font-size-lg;
+  }
+}
+
+.valor-resumo {
+  font-size: $font-size-base;
+  color: $text-muted;
+  margin: 0;
+  line-height: 1.6;
+
+  @media (max-width: $breakpoint-sm) {
+    font-size: $font-size-sm;
+  }
+}
+
+.valor-toggle {
+  width: 40px;
+  height: 40px;
+  border-radius: $border-radius;
+  background: #f5f7fa;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  flex-shrink: 0;
+
+  @media (max-width: $breakpoint-sm) {
+    width: 36px;
+    height: 36px;
   }
 
-  .valor-trigger {
-    display: grid;
-    grid-template-columns: auto 1fr auto;
-    align-items: center;
-    gap: $spacing-lg;
-    padding: $spacing-xl;
-    transition: all 0.3s ease;
+  .material-icons {
+    font-size: 24px;
+    color: $text-muted;
+    transition: inherit;
 
     @media (max-width: $breakpoint-sm) {
-      gap: $spacing-md;
-      padding: $spacing-lg;
+      font-size: 20px;
     }
   }
 
-  .valor-numero {
+  .valor-item.ativo & {
+    .material-icons {
+      color: white;
+    }
+  }
+}
+
+.valor-conteudo {
+  overflow: hidden;
+}
+
+.conteudo-inner {
+  display: flex;
+  align-items: center;
+  gap: $spacing-lg;
+  padding: 0 $spacing-xl $spacing-xl $spacing-xl;
+  padding-left: calc($spacing-xl + 56px + $spacing-lg);
+
+  @media (max-width: $breakpoint-md) {
+    flex-direction: column;
+    padding-left: $spacing-xl;
+    padding-right: $spacing-xl;
+    gap: $spacing-md;
+    align-items: stretch;
+  }
+
+  @media (max-width: $breakpoint-sm) {
+    padding: 0 $spacing-lg $spacing-lg $spacing-lg;
+  }
+}
+
+.conteudo-icon {
+  flex-shrink: 0;
+  width: 64px;
+  height: 64px;
+  border-radius: $border-radius-lg;
+  background: linear-gradient(135deg, rgba($primary-color, 0.05), rgba($secondary-color, 0.05));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.05);
+  margin-top: 2px;
+
+  @media (max-width: $breakpoint-md) {
     width: 56px;
     height: 56px;
-    border-radius: $border-radius-lg;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: $font-size-2xl;
-    font-weight: $font-weight-bold;
-    color: white;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-
-    @media (max-width: $breakpoint-sm) {
-      width: 48px;
-      height: 48px;
-      font-size: $font-size-xl;
-    }
+    margin: 0 auto;
   }
 
-  .valor-info {
-    min-width: 0;
-  }
-
-  .valor-titulo {
-    font-size: $font-size-xl;
-    font-weight: $font-weight-bold;
-    color: $text-color;
-    margin: 0 0 $spacing-xs 0;
-    transition: color 0.3s ease;
-
-    @media (max-width: $breakpoint-sm) {
-      font-size: $font-size-lg;
-    }
-  }
-
-  .valor-resumo {
-    font-size: $font-size-base;
-    color: $text-muted;
-    margin: 0;
-    line-height: 1.6;
-
-    @media (max-width: $breakpoint-sm) {
-      font-size: $font-size-sm;
-    }
-  }
-
-  .valor-toggle {
-    width: 40px;
-    height: 40px;
-    border-radius: $border-radius;
-    background: #f5f7fa;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    flex-shrink: 0;
-
-    @media (max-width: $breakpoint-sm) {
-      width: 36px;
-      height: 36px;
-    }
-
-    .material-icons {
-      font-size: 24px;
-      color: $text-muted;
-      transition: inherit;
-
-      @media (max-width: $breakpoint-sm) {
-        font-size: 20px;
-      }
-    }
-
-    .valor-item.ativo & {
-      .material-icons {
-        color: white;
-      }
-    }
-  }
-
-  .valor-conteudo {
-    overflow: hidden;
-  }
-
-  .conteudo-inner {
-    display: flex;
-    align-items: center;
-    gap: $spacing-lg;
-    padding: 0 $spacing-xl $spacing-xl $spacing-xl;
-    padding-left: calc($spacing-xl + 56px + $spacing-lg);
+  .material-icons {
+    font-size: 40px;
+    opacity: 0.9;
 
     @media (max-width: $breakpoint-md) {
-      flex-direction: column;
-      padding-left: $spacing-xl;
-      padding-right: $spacing-xl;
-      gap: $spacing-md;
-      align-items: stretch;
-    }
-
-    @media (max-width: $breakpoint-sm) {
-      padding: 0 $spacing-lg $spacing-lg $spacing-lg;
+      font-size: 32px;
     }
   }
+}
 
-  .conteudo-icon {
-    flex-shrink: 0;
-    width: 64px;
-    height: 64px;
-    border-radius: $border-radius-lg;
-    background: linear-gradient(135deg, rgba($primary-color, 0.05), rgba($secondary-color, 0.05));
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.05);
-    margin-top: 2px;
+.conteudo-texto {
+  flex: 1;
+  font-size: $font-size-base;
+  line-height: 1.8;
+  color: #4a5568;
+  margin: 0;
+  padding: $spacing-lg;
+  background: linear-gradient(to right, rgba($primary-color, 0.02), transparent);
+  border-radius: $border-radius;
+  border-left: 4px solid currentColor;
+  text-align: justify;
 
-    @media (max-width: $breakpoint-md) {
-      width: 56px;
-      height: 56px;
-      margin: 0 auto;
-    }
-
-    .material-icons {
-      font-size: 40px;
-      opacity: 0.9;
-
-      @media (max-width: $breakpoint-md) {
-        font-size: 32px;
-      }
-    }
+  @media (max-width: $breakpoint-sm) {
+    font-size: $font-size-sm;
+    padding: $spacing-md;
+    text-align: left;
   }
-
-  .conteudo-texto {
-    flex: 1;
-    font-size: $font-size-base;
-    line-height: 1.8;
-    color: #4a5568;
-    margin: 0;
-    padding: $spacing-lg;
-    background: linear-gradient(to right, rgba($primary-color, 0.02), transparent);
-    border-radius: $border-radius;
-    border-left: 4px solid currentColor;
-    text-align: justify;
-
-    @media (max-width: $breakpoint-sm) {
-      font-size: $font-size-sm;
-      padding: $spacing-md;
-      text-align: left;
-    }
-  }
-
+}
 
 // CTA Final
 .cta-final {
