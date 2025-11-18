@@ -124,7 +124,9 @@
       </button>
 
       <!-- Container do Carrossel -->
-      <div class="carousel-container">
+      <div class="carousel-container"
+           (touchstart)="onTouchStart($event)"
+           (touchend)="onTouchEnd($event)">
         <div class="services-grid"
              [style.transform]="getCarouselTransform()">
           <div *ngFor="let service of services"
@@ -155,7 +157,9 @@
       <button *ngFor="let service of services; let i = index"
               class="indicator"
               [class.active]="i === currentIndex"
-              (click)="currentIndex = i"
+              [class.disabled]="i > getMaxIndex()"
+              [disabled]="i > getMaxIndex()"
+              (click)="i <= getMaxIndex() ? currentIndex = i : null"
               [attr.aria-label]="'Ir para categoria ' + (i + 1)"
               [title]="'Ir para categoria ' + (i + 1)">
         <span class="sr-only">Ir para categoria {{ i + 1 }}</span>

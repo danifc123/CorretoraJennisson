@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 
@@ -9,7 +9,8 @@ import { RouterLink } from '@angular/router';
   templateUrl: './home.html',
   styleUrls: ['./home.scss']
 })
-export class Home {
+export class Home implements OnInit, OnDestroy {
+  private resizeListener: any;
   // Serviços/Categorias disponíveis
   services = [
     {
@@ -52,7 +53,43 @@ export class Home {
 
   // Controle do carrossel
   currentIndex = 0;
-  itemsPerView = 3; // Será ajustado por CSS no responsive
+  itemsPerView = 3;
+
+  ngOnInit() {
+    this.updateItemsPerView();
+    this.resizeListener = () => this.updateItemsPerView();
+    window.addEventListener('resize', this.resizeListener);
+  }
+
+  ngOnDestroy() {
+    if (this.resizeListener) {
+      window.removeEventListener('resize', this.resizeListener);
+    }
+  }
+
+  /**
+   * Atualiza quantos items mostrar baseado na largura da tela
+   */
+  updateItemsPerView(): void {
+    const width = window.innerWidth;
+    if (width < 768) {
+      this.itemsPerView = 1; // Mobile: 1 card
+    } else if (width < 992) {
+      this.itemsPerView = 2; // Tablet: 2 cards
+    } else {
+      this.itemsPerView = 3; // Desktop: 3 cards
+    }
+
+    // Reset index se estiver fora do alcance permitido
+    const maxIndex = this.getMaxIndex();
+    if (this.currentIndex > maxIndex) {
+      this.currentIndex = maxIndex;
+    }
+  }
+
+  // Touch/Swipe
+  touchStartX = 0;
+  touchEndX = 0;
 
   // Depoimentos de clientes
   testimonials = [
@@ -97,7 +134,8 @@ export class Home {
    * Navega para o próximo item do carrossel
    */
   nextSlide(): void {
-    if (this.currentIndex < this.services.length - this.itemsPerView) {
+    const maxIndex = this.getMaxIndex();
+    if (this.currentIndex < maxIndex) {
       this.currentIndex++;
     }
   }
@@ -115,7 +153,8 @@ export class Home {
    * Verifica se pode navegar para o próximo
    */
   canGoNext(): boolean {
-    return this.currentIndex < this.services.length - this.itemsPerView;
+    const maxIndex = Math.max(0, this.services.length - this.itemsPerView);
+    return this.currentIndex < maxIndex;
   }
 
   /**
@@ -126,10 +165,50 @@ export class Home {
   }
 
   /**
+   * Retorna o índice máximo permitido
+   */
+  getMaxIndex(): number {
+    return Math.max(0, this.services.length - this.itemsPerView);
+  }
+
+  /**
    * Retorna o estilo de transformação do carrossel
    */
   getCarouselTransform(): string {
     return `translateX(-${this.currentIndex * (100 / this.itemsPerView)}%)`;
+  }
+
+  /**
+   * Inicia o toque/arrasto
+   */
+  onTouchStart(event: TouchEvent): void {
+    this.touchStartX = event.changedTouches[0].screenX;
+  }
+
+  /**
+   * Finaliza o toque/arrasto e detecta direção
+   */
+  onTouchEnd(event: TouchEvent): void {
+    this.touchEndX = event.changedTouches[0].screenX;
+    this.handleSwipe();
+  }
+
+  /**
+   * Processa o swipe e navega
+   */
+  handleSwipe(): void {
+    const swipeThreshold = 50; // Mínimo de 50px para considerar swipe
+    const difference = this.touchStartX - this.touchEndX;
+
+    if (Math.abs(difference) > swipeThreshold) {
+      if (difference > 0) {
+        // Swipe para esquerda = próximo
+        this.nextSlide();
+      } else {
+        // Swipe para direita = anterior
+        this.prevSlide();
+      }
+    }
   }
 }
 
