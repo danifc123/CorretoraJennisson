@@ -18,6 +18,10 @@ export const routes: Routes = [
     loadComponent: () => import('./modules/contato/contato').then(m => m.Contato)
   },
   {
+    path: 'login',
+    loadComponent: () => import('./layout/login').then(m => m.Login)
+  },
+  {
     path: '**',
     redirectTo: ''
   }

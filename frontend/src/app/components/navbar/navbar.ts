@@ -1,5 +1,5 @@
 import { Component, signal } from '@angular/core';
-import { RouterLink, RouterLinkActive } from '@angular/router';
+import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -11,6 +11,8 @@ import { CommonModule } from '@angular/common';
 export class Navbar {
   // Estado do menu mobile
   protected menuOpen = signal(false);
+
+  constructor(private router: Router) {}
 
   /**
    * Alterna o estado do menu mobile
@@ -27,11 +29,10 @@ export class Navbar {
   }
 
   /**
-   * Ação de login
+   * Ação de login - Navega para página de login
    */
   onLogin(): void {
-    // TODO: Implementar navegação para página de login
-    console.log('Navegando para login...');
     this.closeMenu();
+    this.router.navigate(['/login']);
   }
 }
