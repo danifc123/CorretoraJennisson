@@ -331,19 +331,9 @@
 // Valores - Design Moderno e Elegante
 .valores {
   padding: $spacing-3xl 0;
-  background: #fafbfc;
+  background: white;
   position: relative;
-
-  &::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 300px;
-    background: linear-gradient(135deg, rgba($primary-color, 0.03) 0%, rgba($secondary-color, 0.02) 100%);
-    pointer-events: none;
-  }
+}
 
   .container {
     position: relative;
@@ -597,7 +587,7 @@
       text-align: left;
     }
   }
-}
+
 
 // CTA Final
 .cta-final {
