@@ -53,8 +53,8 @@
     margin-bottom: $spacing-3xl;
 
     .logo {
-      width: 100px;
-      height: 100px;
+      max-width: 100%;
+      max-height: 100%;
       margin-bottom: $spacing-lg;
       filter: brightness(0) invert(1);
     }
