@@ -22,6 +22,22 @@ export const routes: Routes = [
     loadComponent: () => import('./layout/login').then(m => m.Login)
   },
   {
+    path: 'register',
+    loadComponent: () => import('./layout/register').then(m => m.Register)
+  },
+  {
+    path: 'forgot-password',
+    loadComponent: () => import('./layout/forgot-password').then(m => m.ForgotPassword)
+  },
+  {
+    path: 'terms',
+    loadComponent: () => import('./layout/terms').then(m => m.Terms)
+  },
+  {
+    path: 'privacy',
+    loadComponent: () => import('./layout/privacy').then(m => m.Privacy)
+  },
+  {
     path: '**',
     redirectTo: ''
   }

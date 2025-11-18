@@ -1,0 +1,223 @@
+<div class="register-container">
+  <!-- Lado Esquerdo - Imagem/Branding -->
+  <div class="register-left">
+    <div class="branding">
+      <img src="/images/Logo-login.svg"
+           alt="Jenisson Luckwü Imóveis"
+           class="logo" />
+
+      <div class="welcome-text">
+        <h2>Junte-se a nós!</h2>
+        <p>Crie sua conta e tenha acesso exclusivo aos melhores imóveis</p>
+      </div>
+
+      <div class="features">
+        <div class="feature-item">
+          <span class="material-icons">search</span>
+          <p>Busque entre diversos imóveis</p>
+        </div>
+        <div class="feature-item">
+          <span class="material-icons">favorite</span>
+          <p>Salve seus imóveis favoritos</p>
+        </div>
+        <div class="feature-item">
+          <span class="material-icons">notifications_active</span>
+          <p>Receba alertas de novidades</p>
+        </div>
+        <div class="feature-item">
+          <span class="material-icons">support_agent</span>
+          <p>Atendimento especializado</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Lado Direito - Formulário -->
+  <div class="register-right">
+    <div class="register-form-wrapper">
+      <!-- Header -->
+      <div class="form-header">
+        <h2>Criar Conta</h2>
+        <p>Preencha seus dados para começar</p>
+      </div>
+
+      <!-- Mensagem de Sucesso -->
+      @if (successMessage()) {
+      <div class="alert alert-success"
+           role="alert">
+        <span class="material-icons">check_circle</span>
+        <p>{{ successMessage() }}</p>
+      </div>
+      }
+
+      <!-- Mensagem de Erro -->
+      @if (errorMessage()) {
+      <div class="alert alert-error"
+           role="alert">
+        <span class="material-icons">error</span>
+        <p>{{ errorMessage() }}</p>
+      </div>
+      }
+
+      <!-- Formulário -->
+      <form class="register-form"
+            (ngSubmit)="onSubmit()">
+        <!-- Campo Nome Completo -->
+        <div class="form-group">
+          <label for="name">
+            <span class="material-icons">person</span>
+            Nome Completo *
+          </label>
+          <input type="text"
+                 id="name"
+                 name="name"
+                 [(ngModel)]="name"
+                 placeholder="Seu nome completo"
+                 [disabled]="loading()"
+                 autocomplete="name"
+                 required />
+        </div>
+
+        <!-- Campos E-mail e Telefone (2 colunas) -->
+        <div class="form-row">
+          <div class="form-group">
+            <label for="email">
+              <span class="material-icons">email</span>
+              E-mail *
+            </label>
+            <input type="email"
+                   id="email"
+                   name="email"
+                   [(ngModel)]="email"
+                   placeholder="seu@email.com"
+                   [disabled]="loading()"
+                   autocomplete="email"
+                   required />
+          </div>
+
+          <div class="form-group">
+            <label for="phone">
+              <span class="material-icons">phone</span>
+              Telefone
+            </label>
+            <input type="tel"
+                   id="phone"
+                   name="phone"
+                   [(ngModel)]="phone"
+                   (input)="formatPhone()"
+                   placeholder="(00) 00000-0000"
+                   [disabled]="loading()"
+                   autocomplete="tel"
+                   maxlength="15" />
+          </div>
+        </div>
+
+        <!-- Campo Senha -->
+        <div class="form-group">
+          <label for="password">
+            <span class="material-icons">lock</span>
+            Senha *
+          </label>
+          <div class="password-wrapper">
+            <input [type]="showPassword() ? 'text' : 'password'"
+                   id="password"
+                   name="password"
+                   [(ngModel)]="password"
+                   placeholder="Mínimo 6 caracteres"
+                   [disabled]="loading()"
+                   autocomplete="new-password"
+                   required />
+            <button type="button"
+                    class="toggle-password"
+                    (click)="togglePasswordVisibility()"
+                    [attr.aria-label]="showPassword() ? 'Ocultar senha' : 'Mostrar senha'"
+                    [title]="showPassword() ? 'Ocultar senha' : 'Mostrar senha'">
+              <span class="material-icons">
+                {{ showPassword() ? 'visibility_off' : 'visibility' }}
+              </span>
+            </button>
+          </div>
+          <small class="field-hint">Use no mínimo 6 caracteres</small>
+        </div>
+
+        <!-- Campo Confirmar Senha -->
+        <div class="form-group">
+          <label for="confirmPassword">
+            <span class="material-icons">lock_outline</span>
+            Confirmar Senha *
+          </label>
+          <div class="password-wrapper">
+            <input [type]="showConfirmPassword() ? 'text' : 'password'"
+                   id="confirmPassword"
+                   name="confirmPassword"
+                   [(ngModel)]="confirmPassword"
+                   placeholder="Digite a senha novamente"
+                   [disabled]="loading()"
+                   autocomplete="new-password"
+                   required />
+            <button type="button"
+                    class="toggle-password"
+                    (click)="toggleConfirmPasswordVisibility()"
+                    [attr.aria-label]="showConfirmPassword() ? 'Ocultar senha' : 'Mostrar senha'"
+                    [title]="showConfirmPassword() ? 'Ocultar senha' : 'Mostrar senha'">
+              <span class="material-icons">
+                {{ showConfirmPassword() ? 'visibility_off' : 'visibility' }}
+              </span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Checkbox Termos -->
+        <div class="form-group">
+          <label class="checkbox-label">
+            <input type="checkbox"
+                   [(ngModel)]="acceptTerms"
+                   name="acceptTerms"
+                   [disabled]="loading()"
+                   required />
+            <span>
+              Eu aceito os
+              <a routerLink="/terms"
+                 class="link-terms"
+                 target="_blank">Termos de Uso</a>
+              e a
+              <a routerLink="/privacy"
+                 class="link-terms"
+                 target="_blank">Política de Privacidade</a>
+            </span>
+          </label>
+        </div>
+
+        <!-- Botão de Submit -->
+        <button type="submit"
+                class="btn-register"
+                [disabled]="loading()"
+                [class.loading]="loading()">
+          @if (loading()) {
+          <span class="spinner"></span>
+          <span>Criando conta...</span>
+          } @else {
+          <span class="material-icons">person_add</span>
+          <span>Criar Conta</span>
+          }
+        </button>
+      </form>
+
+      <!-- Footer -->
+      <div class="form-footer">
+        <p class="login-link">
+          Já tem uma conta?
+          <a routerLink="/login"
+             class="link-primary">Fazer login</a>
+        </p>
+        <p>
+          <a routerLink="/"
+             class="back-link">
+            <span class="material-icons">arrow_back</span>
+            Voltar para o site
+          </a>
+        </p>
+      </div>
+    </div>
+  </div>
+</div>

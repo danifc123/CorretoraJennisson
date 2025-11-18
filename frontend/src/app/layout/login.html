@@ -96,9 +96,8 @@
                    [disabled]="loading()" />
             <span>Lembrar-me</span>
           </label>
-          <a href="#"
-             class="forgot-password"
-             tabindex="-1">Esqueci a senha</a>
+          <a routerLink="/forgot-password"
+             class="forgot-password">Esqueci a senha</a>
         </div>
 
         <!-- Botão de Submit -->
@@ -120,7 +119,7 @@
       <div class="form-footer">
         <p class="register-link">
           Ainda não tem uma conta?
-          <a href="#" class="link-primary">Criar conta</a>
+          <a routerLink="/register" class="link-primary">Criar conta</a>
         </p>
         <p>
           <a routerLink="/"

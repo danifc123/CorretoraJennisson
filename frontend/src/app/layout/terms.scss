@@ -1,0 +1,281 @@
+// Importar variáveis globais
+@use "../../styles/variables" as *;
+
+// Página Legal
+.legal-page {
+  min-height: 100vh;
+  background: $bg-secondary;
+}
+
+// Header
+.legal-header {
+  background: linear-gradient(135deg, $primary-color 0%, $secondary-color 100%);
+  color: white;
+  padding: $spacing-3xl $spacing-lg;
+  position: relative;
+  overflow: hidden;
+
+  // Efeito de fundo
+  &::before {
+    content: "";
+    position: absolute;
+    top: -50%;
+    right: -50%;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(
+      circle,
+      rgba(255, 255, 255, 0.1) 0%,
+      transparent 70%
+    );
+    animation: float 6s ease-in-out infinite;
+  }
+
+  .container {
+    max-width: 1000px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+  }
+
+  .header-content {
+    text-align: center;
+    padding: $spacing-2xl 0;
+
+    .icon-large {
+      font-size: 64px;
+      margin-bottom: $spacing-lg;
+      opacity: 0.95;
+    }
+
+    h1 {
+      font-size: $font-size-4xl;
+      font-weight: $font-weight-bold;
+      margin-bottom: $spacing-sm;
+
+      @media (max-width: $breakpoint-sm) {
+        font-size: $font-size-3xl;
+      }
+    }
+
+    .subtitle {
+      font-size: $font-size-base;
+      opacity: 0.9;
+    }
+  }
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+  50% {
+    transform: translate(30px, 30px) rotate(10deg);
+  }
+}
+
+// Content
+.legal-content {
+  padding: $spacing-3xl $spacing-lg;
+
+  .container {
+    max-width: 900px;
+    margin: 0 auto;
+  }
+}
+
+// Intro Box
+.intro-box {
+  display: flex;
+  gap: $spacing-lg;
+  padding: $spacing-xl;
+  margin-bottom: $spacing-3xl;
+  background: white;
+  border-left: 4px solid $secondary-color;
+  border-radius: $border-radius;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+
+  @media (max-width: $breakpoint-sm) {
+    flex-direction: column;
+    gap: $spacing-md;
+    padding: $spacing-lg;
+  }
+
+  > .material-icons {
+    font-size: 32px;
+    color: $secondary-color;
+    flex-shrink: 0;
+
+    @media (max-width: $breakpoint-sm) {
+      font-size: 28px;
+    }
+  }
+
+  .intro-text {
+    flex: 1;
+
+    p {
+      margin: 0;
+      font-size: $font-size-base;
+      line-height: 1.7;
+      color: $text-color;
+
+      strong {
+        color: $primary-color;
+        font-weight: $font-weight-semibold;
+      }
+    }
+  }
+}
+
+// Sections
+.sections {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-2xl;
+}
+
+.section-item {
+  background: white;
+  padding: $spacing-xl;
+  border-radius: $border-radius;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  transition: $transition;
+
+  &:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+    transform: translateY(-2px);
+  }
+
+  @media (max-width: $breakpoint-sm) {
+    padding: $spacing-lg;
+  }
+
+  h2 {
+    font-size: $font-size-xl;
+    font-weight: $font-weight-bold;
+    color: $primary-color;
+    margin-bottom: $spacing-md;
+
+    @media (max-width: $breakpoint-sm) {
+      font-size: $font-size-lg;
+    }
+  }
+
+  p {
+    margin: 0;
+    font-size: $font-size-base;
+    line-height: 1.8;
+    color: $text-color;
+    text-align: justify;
+
+    @media (max-width: $breakpoint-sm) {
+      font-size: $font-size-sm;
+      text-align: left;
+    }
+  }
+}
+
+// Legal Footer
+.legal-footer {
+  margin-top: $spacing-3xl;
+  padding-top: $spacing-3xl;
+  border-top: 2px solid #e0e0e0;
+}
+
+.footer-box {
+  display: flex;
+  gap: $spacing-lg;
+  padding: $spacing-xl;
+  margin-bottom: $spacing-xl;
+  background: linear-gradient(135deg, rgba($secondary-color, 0.05) 0%, rgba($primary-color, 0.05) 100%);
+  border-radius: $border-radius;
+
+  @media (max-width: $breakpoint-sm) {
+    flex-direction: column;
+    gap: $spacing-md;
+    padding: $spacing-lg;
+  }
+
+  > .material-icons {
+    font-size: 32px;
+    color: $secondary-color;
+    flex-shrink: 0;
+
+    @media (max-width: $breakpoint-sm) {
+      font-size: 28px;
+    }
+  }
+
+  .footer-text {
+    flex: 1;
+
+    h3 {
+      font-size: $font-size-lg;
+      font-weight: $font-weight-bold;
+      color: $primary-color;
+      margin-bottom: $spacing-sm;
+    }
+
+    p {
+      margin: 0;
+      font-size: $font-size-base;
+      line-height: 1.7;
+      color: $text-color;
+
+      @media (max-width: $breakpoint-sm) {
+        font-size: $font-size-sm;
+      }
+
+      a {
+        color: $secondary-color;
+        font-weight: $font-weight-semibold;
+        text-decoration: none;
+        transition: $transition;
+
+        &:hover {
+          text-decoration: underline;
+          color: $primary-color;
+        }
+      }
+    }
+  }
+}
+
+.footer-links {
+  display: flex;
+  gap: $spacing-md;
+  justify-content: center;
+
+  @media (max-width: $breakpoint-sm) {
+    flex-direction: column;
+  }
+
+  .link-document {
+    display: inline-flex;
+    align-items: center;
+    gap: $spacing-sm;
+    padding: $spacing-md $spacing-lg;
+    color: $text-color;
+    background: white;
+    border: 2px solid #e0e0e0;
+    border-radius: $border-radius;
+    text-decoration: none;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-medium;
+    transition: $transition;
+
+    &:hover {
+      border-color: $secondary-color;
+      color: $secondary-color;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba($secondary-color, 0.2);
+    }
+
+    .material-icons {
+      font-size: 20px;
+    }
+  }
+}
+

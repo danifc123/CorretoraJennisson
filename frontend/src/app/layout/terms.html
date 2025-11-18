@@ -1,0 +1,69 @@
+<div class="legal-page">
+  <!-- Header -->
+  <div class="legal-header">
+    <div class="container">
+      <div class="header-content">
+        <span class="material-icons icon-large">gavel</span>
+        <h1>Termos de Uso</h1>
+        <p class="subtitle">
+          Última atualização: {{ lastUpdate }}
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Content -->
+  <div class="legal-content">
+    <div class="container">
+      <!-- Introdução -->
+      <div class="intro-box">
+        <span class="material-icons">info</span>
+        <div class="intro-text">
+          <p>
+            <strong>Bem-vindo aos Termos de Uso da Jenisson Luckwü Imóveis.</strong>
+            Estes termos regem o uso de nosso site e serviços. Ao utilizar nossa plataforma, você concorda com todos os termos descritos abaixo.
+          </p>
+        </div>
+      </div>
+
+      <!-- Seções -->
+      <div class="sections">
+        @for (section of sections; track section.title) {
+        <section class="section-item">
+          <h2>{{ section.title }}</h2>
+          <p>{{ section.content }}</p>
+        </section>
+        }
+      </div>
+
+      <!-- Footer -->
+      <div class="legal-footer">
+        <div class="footer-box">
+          <span class="material-icons">support_agent</span>
+          <div class="footer-text">
+            <h3>Precisa de Ajuda?</h3>
+            <p>
+              Se você tiver dúvidas sobre nossos Termos de Uso, entre em contato através da nossa
+              <a routerLink="/contato">página de contato</a>
+              ou diretamente com nosso corretor Jenisson Luckwü (CRECI 11639).
+            </p>
+          </div>
+        </div>
+
+        <div class="footer-links">
+          <a routerLink="/privacy"
+             class="link-document">
+            <span class="material-icons">shield</span>
+            <span>Política de Privacidade</span>
+          </a>
+          <a routerLink="/"
+             class="link-document">
+            <span class="material-icons">home</span>
+            <span>Página Inicial</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+

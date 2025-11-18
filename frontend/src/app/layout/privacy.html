@@ -1,0 +1,68 @@
+<div class="legal-page">
+  <!-- Header -->
+  <div class="legal-header">
+    <div class="container">
+      <div class="header-content">
+        <span class="material-icons icon-large">shield</span>
+        <h1>Política de Privacidade</h1>
+        <p class="subtitle">
+          Última atualização: {{ lastUpdate }}
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Content -->
+  <div class="legal-content">
+    <div class="container">
+      <!-- Introdução -->
+      <div class="intro-box">
+        <span class="material-icons">info</span>
+        <div class="intro-text">
+          <p>
+            <strong>Sua privacidade é importante para nós.</strong>
+            Esta Política de Privacidade explica como coletamos, usamos, compartilhamos e protegemos suas informações pessoais quando você utiliza nosso site e serviços.
+          </p>
+        </div>
+      </div>
+
+      <!-- Seções -->
+      <div class="sections">
+        @for (section of sections; track section.title) {
+        <section class="section-item">
+          <h2>{{ section.title }}</h2>
+          <p>{{ section.content }}</p>
+        </section>
+        }
+      </div>
+
+      <!-- Footer -->
+      <div class="legal-footer">
+        <div class="footer-box">
+          <span class="material-icons">support_agent</span>
+          <div class="footer-text">
+            <h3>Precisa de Ajuda?</h3>
+            <p>
+              Se você tiver dúvidas sobre nossa Política de Privacidade ou sobre como tratamos seus dados, entre em contato através da nossa
+              <a routerLink="/contato">página de contato</a>
+              ou diretamente com nosso corretor Jenisson Luckwü (CRECI 11639).
+            </p>
+          </div>
+        </div>
+
+        <div class="footer-links">
+          <a routerLink="/terms"
+             class="link-document">
+            <span class="material-icons">gavel</span>
+            <span>Termos de Uso</span>
+          </a>
+          <a routerLink="/"
+             class="link-document">
+            <span class="material-icons">home</span>
+            <span>Página Inicial</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
