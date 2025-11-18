@@ -38,6 +38,10 @@ export const routes: Routes = [
     loadComponent: () => import('./layout/privacy').then(m => m.Privacy)
   },
   {
+    path: 'admin/register',
+    loadComponent: () => import('./layout/admin-register').then(m => m.AdminRegister)
+  },
+  {
     path: '**',
     redirectTo: ''
   }
