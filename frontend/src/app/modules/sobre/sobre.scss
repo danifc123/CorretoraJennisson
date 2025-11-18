@@ -94,8 +94,8 @@
       }
 
       p {
+        margin-bottom: 1rem;
         text-align: justify;
-
         strong {
           color: $secondary-color;
           font-weight: $font-weight-bold;
@@ -116,7 +116,6 @@
         font-size: $font-size-xl;
         font-weight: $font-weight-bold;
         margin-right: $spacing-sm;
-        margin-bottom: 1rem;
       }
 
       .texto-destaque {
@@ -268,7 +267,6 @@
 // Diferenciais
 .diferenciais {
   padding: $spacing-3xl 0;
-  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
 
   .diferenciais-grid {
     display: grid;
