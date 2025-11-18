@@ -14,7 +14,8 @@ export class Navbar {
 
   // Estado de autenticação (simulado - depois conectar com serviço de auth)
   // TODO: Conectar com AuthService
-  isAdmin = signal(true); // Altere para true para testar como admin
+  isAdmin = signal(false); // Altere para true para testar como admin
+  isLoggedIn = signal(false); // Usuário comum logado (não admin)
 
   constructor(private router: Router) { }
 

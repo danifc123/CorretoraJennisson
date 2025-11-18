@@ -1,0 +1,390 @@
+// Importar variáveis globais
+@use "../../../styles/variables" as *;
+
+.favoritos-page {
+  min-height: 100vh;
+  background: $bg-secondary;
+}
+
+// Hero Section
+.hero-section {
+  background: linear-gradient(135deg, $primary-color 0%, $secondary-color 100%);
+  padding: $spacing-3xl 0;
+  text-align: center;
+  color: white;
+
+  @media (max-width: $breakpoint-sm) {
+    padding: $spacing-2xl 0;
+  }
+
+  .hero-content {
+    h1 {
+      font-size: $font-size-4xl;
+      font-weight: $font-weight-bold;
+      margin-bottom: $spacing-md;
+
+      @media (max-width: $breakpoint-sm) {
+        font-size: $font-size-3xl;
+      }
+    }
+
+    p {
+      font-size: $font-size-xl;
+      opacity: 0.95;
+
+      @media (max-width: $breakpoint-sm) {
+        font-size: $font-size-lg;
+      }
+    }
+  }
+}
+
+// Container Principal
+.favoritos-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: $spacing-2xl $spacing-xl;
+
+  @media (max-width: $breakpoint-sm) {
+    padding: $spacing-lg;
+  }
+}
+
+// Header
+.favoritos-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: $spacing-xl;
+  padding: $spacing-lg;
+  background: white;
+  border-radius: $border-radius-lg;
+  box-shadow: $shadow;
+
+  @media (max-width: $breakpoint-sm) {
+    flex-direction: column;
+    gap: $spacing-md;
+  }
+
+  .header-info {
+    h2 {
+      font-size: $font-size-2xl;
+      font-weight: $font-weight-bold;
+      color: $primary-color;
+      margin-bottom: $spacing-xs;
+
+      @media (max-width: $breakpoint-sm) {
+        font-size: $font-size-xl;
+      }
+    }
+
+    .favoritos-count {
+      font-size: $font-size-base;
+      color: $text-color;
+      margin: 0;
+
+      strong {
+        font-weight: $font-weight-bold;
+        color: $accent-color;
+        font-size: $font-size-lg;
+      }
+    }
+  }
+
+  .btn-clear-all {
+    display: flex;
+    align-items: center;
+    gap: $spacing-xs;
+    padding: 10px $spacing-lg;
+    background: transparent;
+    border: 2px solid $danger-color;
+    color: $danger-color;
+    border-radius: $border-radius;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-semibold;
+    cursor: pointer;
+    transition: $transition;
+
+    &:hover {
+      background: $danger-color;
+      color: white;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba($danger-color, 0.3);
+    }
+
+    .material-icons {
+      font-size: 18px;
+    }
+
+    @media (max-width: $breakpoint-sm) {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+}
+
+// Grid de Favoritos
+.favoritos-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: $spacing-xl;
+
+  @media (max-width: $breakpoint-md) {
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: $spacing-lg;
+  }
+
+  @media (max-width: $breakpoint-sm) {
+    grid-template-columns: 1fr;
+  }
+}
+
+// Card de Favorito
+.favorito-card {
+  background: white;
+  border-radius: $border-radius-lg;
+  overflow: hidden;
+  box-shadow: $shadow;
+  transition: $transition;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: $shadow-lg;
+  }
+
+  // Botão Remover
+  .remove-btn {
+    position: absolute;
+    top: $spacing-md;
+    right: $spacing-md;
+    z-index: 10;
+    width: 36px;
+    height: 36px;
+    background: rgba(255, 255, 255, 0.95);
+    border: none;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: $transition;
+    box-shadow: $shadow;
+
+    .material-icons {
+      font-size: 20px;
+      color: $danger-color;
+    }
+
+    &:hover {
+      background: $danger-color;
+      transform: scale(1.1);
+
+      .material-icons {
+        color: white;
+      }
+    }
+  }
+
+  // Imagem
+  .favorito-image {
+    height: 250px;
+    background: $bg-light;
+    position: relative;
+    overflow: hidden;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: $transition;
+    }
+
+    .favorito-image-placeholder {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: $bg-secondary;
+      color: $text-muted;
+
+      .material-icons {
+        font-size: 48px;
+        margin-bottom: $spacing-sm;
+      }
+
+      p {
+        font-size: $font-size-sm;
+        margin: 0;
+      }
+    }
+
+    &:hover img {
+      transform: scale(1.05);
+    }
+  }
+
+  // Informações
+  .favorito-info {
+    padding: $spacing-lg;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+
+    .favorito-title {
+      font-size: $font-size-xl;
+      font-weight: $font-weight-bold;
+      color: $primary-color;
+      margin-bottom: $spacing-sm;
+      line-height: 1.4;
+    }
+
+    .favorito-location {
+      display: flex;
+      align-items: center;
+      gap: $spacing-xs;
+      color: $text-light;
+      font-size: $font-size-sm;
+      margin-bottom: $spacing-md;
+
+      .material-icons {
+        font-size: 18px;
+        color: $secondary-color;
+      }
+    }
+
+    .favorito-features {
+      display: flex;
+      flex-wrap: wrap;
+      gap: $spacing-md;
+      margin-bottom: $spacing-md;
+      padding-bottom: $spacing-md;
+      border-bottom: 1px solid $bg-secondary;
+
+      .feature-item {
+        display: flex;
+        align-items: center;
+        gap: $spacing-xs;
+        font-size: $font-size-sm;
+        color: $text-color;
+
+        .material-icons {
+          font-size: 18px;
+          color: $secondary-color;
+        }
+      }
+    }
+
+    .favorito-description {
+      color: $text-color;
+      font-size: $font-size-sm;
+      line-height: 1.6;
+      margin-bottom: $spacing-lg;
+      flex: 1;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .favorito-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: $spacing-md;
+      margin-top: auto;
+
+      .favorito-price {
+        font-size: $font-size-xl;
+        font-weight: $font-weight-bold;
+        color: $secondary-color;
+        white-space: nowrap;
+      }
+
+      .btn-view-details {
+        display: flex;
+        align-items: center;
+        gap: $spacing-xs;
+        padding: 10px $spacing-lg;
+        background: linear-gradient(135deg, $secondary-color 0%, $primary-color 100%);
+        color: white;
+        text-decoration: none;
+        border-radius: $border-radius;
+        font-size: $font-size-sm;
+        font-weight: $font-weight-semibold;
+        transition: $transition;
+        white-space: nowrap;
+
+        .material-icons {
+          font-size: 18px;
+        }
+
+        &:hover {
+          transform: translateX(4px);
+          box-shadow: $shadow;
+        }
+      }
+    }
+  }
+}
+
+// Estado Vazio
+.empty-state {
+  text-align: center;
+  padding: $spacing-3xl $spacing-xl;
+  background: white;
+  border-radius: $border-radius-lg;
+  box-shadow: $shadow;
+
+  .material-icons {
+    font-size: 64px;
+    color: $text-muted;
+    margin-bottom: $spacing-lg;
+  }
+
+  h3 {
+    font-size: $font-size-2xl;
+    font-weight: $font-weight-bold;
+    color: $primary-color;
+    margin-bottom: $spacing-md;
+  }
+
+  p {
+    font-size: $font-size-base;
+    color: $text-light;
+    margin-bottom: $spacing-xl;
+  }
+
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: $spacing-xs;
+    padding: $spacing-md $spacing-xl;
+    background: $secondary-color;
+    color: white;
+    border: none;
+    border-radius: $border-radius;
+    font-size: $font-size-base;
+    font-weight: $font-weight-semibold;
+    text-decoration: none;
+    cursor: pointer;
+    transition: $transition;
+    box-shadow: 0 4px 12px rgba($secondary-color, 0.3);
+
+    &:hover {
+      background: $active-color;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba($secondary-color, 0.4);
+    }
+
+    .material-icons {
+      font-size: 20px;
+    }
+  }
+}
+

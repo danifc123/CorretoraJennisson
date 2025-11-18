@@ -170,6 +170,36 @@
             }
           }
         }
+
+        &.btn-favorites {
+          background-color: transparent;
+          border: 2px solid $accent-color;
+          color: $accent-color;
+          text-decoration: none;
+
+          .material-icons {
+            font-size: 18px;
+          }
+
+          .btn-text {
+            @media (max-width: $breakpoint-sm) {
+              display: none;
+            }
+          }
+
+          &:hover {
+            background-color: $accent-color;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(231, 76, 60, 0.3);
+          }
+
+          &.active {
+            background-color: $accent-color;
+            color: white;
+            box-shadow: 0 2px 8px rgba(231, 76, 60, 0.4);
+          }
+        }
       }
 
       // Badge de Identificação Admin (não é botão, apenas identificador)

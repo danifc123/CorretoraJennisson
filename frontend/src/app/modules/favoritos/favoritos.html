@@ -1,0 +1,131 @@
+<div class="favoritos-page">
+  <!-- Hero Section -->
+  <section class="hero-section">
+    <div class="hero-content">
+      <h1>Meus Favoritos</h1>
+      <p>Imóveis que você salvou para consultar depois</p>
+    </div>
+  </section>
+
+  <!-- Container Principal -->
+  <div class="favoritos-container">
+    <!-- Header com Contador e Ações -->
+    <div class="favoritos-header">
+      <div class="header-info">
+        <h2>Seus Imóveis Favoritos</h2>
+        <p class="favoritos-count">
+          <strong>{{ favoritos().length }}</strong>
+          @if (favoritos().length === 1) {
+          <span>imóvel favoritado</span>
+          } @else {
+          <span>imóveis favoritados</span>
+          }
+        </p>
+      </div>
+
+      @if (favoritos().length > 0) {
+      <button type="button"
+              class="btn-clear-all"
+              (click)="limparFavoritos()"
+              title="Remover todos os favoritos"
+              aria-label="Remover todos os favoritos">
+        <span class="material-icons">delete_outline</span>
+        <span>Limpar Todos</span>
+      </button>
+      }
+    </div>
+
+    <!-- Grid de Favoritos -->
+    @if (favoritos().length > 0) {
+    <div class="favoritos-grid">
+      @for (imovel of favoritos(); track imovel.id) {
+      <article class="favorito-card">
+        <!-- Botão Remover -->
+        <button type="button"
+                class="remove-btn"
+                (click)="removerFavorito(imovel)"
+                title="Remover dos favoritos"
+                aria-label="Remover dos favoritos">
+          <span class="material-icons">close</span>
+        </button>
+
+        <!-- Imagem -->
+        <div class="favorito-image">
+          @if (imovel.imagem) {
+          <img [src]="imovel.imagem"
+               [alt]="imovel.titulo"
+               title="Imagem do imóvel"
+               [attr.title]="imovel.titulo" />
+          } @else {
+          <div class="favorito-image-placeholder">
+            <span class="material-icons">home</span>
+            <p>Imagem não disponível</p>
+          </div>
+          }
+        </div>
+
+        <!-- Informações -->
+        <div class="favorito-info">
+          <h3 class="favorito-title">{{ imovel.titulo }}</h3>
+
+          <p class="favorito-location">
+            <span class="material-icons">location_on</span>
+            {{ imovel.bairro }}, {{ imovel.cidade }}
+          </p>
+
+          <div class="favorito-features">
+            @if (imovel.quartos) {
+            <span class="feature-item">
+              <span class="material-icons">bed</span>
+              {{ imovel.quartos }}
+            </span>
+            }
+            @if (imovel.banheiros) {
+            <span class="feature-item">
+              <span class="material-icons">bathroom</span>
+              {{ imovel.banheiros }}
+            </span>
+            }
+            @if (imovel.area) {
+            <span class="feature-item">
+              <span class="material-icons">square_foot</span>
+              {{ imovel.area }}m²
+            </span>
+            }
+            @if (imovel.vagas) {
+            <span class="feature-item">
+              <span class="material-icons">directions_car</span>
+              {{ imovel.vagas }}
+            </span>
+            }
+          </div>
+
+          <p class="favorito-description">{{ imovel.descricao }}</p>
+
+          <div class="favorito-footer">
+            <span class="favorito-price">{{ formatarPreco(imovel.preco) }}</span>
+            <a [routerLink]="['/imoveis', imovel.id]"
+               class="btn-view-details">
+              Ver Detalhes
+              <span class="material-icons">arrow_forward</span>
+            </a>
+          </div>
+        </div>
+      </article>
+      }
+    </div>
+    } @else {
+    <!-- Estado Vazio -->
+    <div class="empty-state">
+      <span class="material-icons">favorite_border</span>
+      <h3>Nenhum imóvel favoritado</h3>
+      <p>Comece a explorar os imóveis disponíveis e adicione aos seus favoritos.</p>
+      <a routerLink="/imoveis" class="btn-primary">
+        <span class="material-icons">search</span>
+        Explorar Imóveis
+      </a>
+    </div>
+    }
+  </div>
+</div>
+

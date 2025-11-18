@@ -46,6 +46,10 @@ export const routes: Routes = [
     loadComponent: () => import('./modules/admin/imoveis/imoveis-admin').then(m => m.ImoveisAdmin)
   },
   {
+    path: 'favoritos',
+    loadComponent: () => import('./modules/favoritos/favoritos').then(m => m.Favoritos)
+  },
+  {
     path: '**',
     redirectTo: ''
   }

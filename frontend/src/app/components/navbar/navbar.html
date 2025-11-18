@@ -59,8 +59,8 @@
           </a>
         </ng-container>
 
-        <!-- Identificador Admin ou Botão Entrar -->
-        <ng-container *ngIf="isAdmin(); else loginButton">
+        <!-- Identificador Admin, Botão Favoritos ou Botão Entrar -->
+        <ng-container *ngIf="isAdmin()">
           <div class="admin-badge"
                title="Você está logado como administrador"
                aria-label="Status de administrador">
@@ -69,8 +69,20 @@
           </div>
         </ng-container>
 
+        <ng-container *ngIf="!isAdmin() && isLoggedIn(); else loginButton">
+          <a routerLink="/favoritos"
+             class="btn btn-favorites"
+             routerLinkActive="active"
+             title="Meus Favoritos"
+             aria-label="Ver meus imóveis favoritos">
+            <span class="material-icons">favorite</span>
+            <span class="btn-text">Favoritos</span>
+          </a>
+        </ng-container>
+
         <ng-template #loginButton>
           <button class="btn btn-outline"
+                  *ngIf="!isAdmin() && !isLoggedIn()"
                   (click)="onLogin()">
             <svg xmlns="http://www.w3.org/2000/svg"
                  width="18"
