@@ -50,6 +50,10 @@ export class Home {
     }
   ];
 
+  // Controle do carrossel
+  currentIndex = 0;
+  itemsPerView = 3; // Será ajustado por CSS no responsive
+
   // Depoimentos de clientes
   testimonials = [
     {
@@ -87,6 +91,45 @@ export class Home {
     event.preventDefault();
     console.log('Buscar imóveis...');
     // TODO: Implementar busca
+  }
+
+  /**
+   * Navega para o próximo item do carrossel
+   */
+  nextSlide(): void {
+    if (this.currentIndex < this.services.length - this.itemsPerView) {
+      this.currentIndex++;
+    }
+  }
+
+  /**
+   * Navega para o item anterior do carrossel
+   */
+  prevSlide(): void {
+    if (this.currentIndex > 0) {
+      this.currentIndex--;
+    }
+  }
+
+  /**
+   * Verifica se pode navegar para o próximo
+   */
+  canGoNext(): boolean {
+    return this.currentIndex < this.services.length - this.itemsPerView;
+  }
+
+  /**
+   * Verifica se pode navegar para o anterior
+   */
+  canGoPrev(): boolean {
+    return this.currentIndex > 0;
+  }
+
+  /**
+   * Retorna o estilo de transformação do carrossel
+   */
+  getCarouselTransform(): string {
+    return `translateX(-${this.currentIndex * (100 / this.itemsPerView)}%)`;
   }
 }
 
