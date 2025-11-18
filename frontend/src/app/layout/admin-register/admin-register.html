@@ -189,31 +189,12 @@
           </div>
         </div>
 
-        <!-- Campo Código Secreto -->
-        <div class="form-group">
-          <label for="secretCode">
-            <span class="material-icons">vpn_key</span>
-            Código Secreto de Administrador *
-          </label>
-          <input type="password"
-                 id="secretCode"
-                 name="secretCode"
-                 [(ngModel)]="secretCode"
-                 placeholder="Código fornecido pelo sistema"
-                 [disabled]="loading()"
-                 autocomplete="off"
-                 required />
-          <small class="field-hint">
-            Este código é necessário para criar contas de administrador
-          </small>
-        </div>
-
         <!-- Informação de Segurança -->
         <div class="info-box">
           <span class="material-icons">info</span>
           <p>
-            <strong>Atenção:</strong> Esta conta terá acesso total ao sistema.
-            Mantenha suas credenciais em segurança.
+            <strong>Atenção:</strong> Esta é uma área administrativa restrita.
+            Esta conta terá acesso total ao sistema. Mantenha suas credenciais em segurança.
           </p>
         </div>
 
@@ -234,11 +215,6 @@
 
       <!-- Footer -->
       <div class="form-footer">
-        <p class="login-link">
-          Já possui uma conta administrativa?
-          <a routerLink="/admin/login"
-             class="link-primary">Fazer login</a>
-        </p>
         <p>
           <a routerLink="/"
              class="back-link">

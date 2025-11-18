@@ -1,13 +1,14 @@
 // Importar variáveis globais
-@use '../../../styles/variables' as *;
+@use "../../../styles/variables" as *;
 
 // Hero Section
 .hero {
   position: relative;
   height: 80vh;
   min-height: 600px;
-  background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)),
-              url('/images/fotojpa.jpg') center/cover no-repeat;
+  background:
+    linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)),
+    url("/images/fotojpa.jpg") center/cover no-repeat;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -164,7 +165,7 @@
     // Oculta cards a partir do 3º no mobile
     @media (max-width: $breakpoint-sm) {
       .property-card:nth-child(3),
-      .property-card:nth-child(n+4) {
+      .property-card:nth-child(n + 4) {
         display: none !important;
       }
     }
@@ -495,7 +496,7 @@
     // Dica visual de swipe no mobile
     @media (max-width: $breakpoint-md) {
       &::before {
-        content: '← Deslize →';
+        content: "← Deslize →";
         position: absolute;
         top: -30px;
         left: 50%;
@@ -544,7 +545,8 @@
 
 // Animação de dica de swipe
 @keyframes fadeInOut {
-  0%, 100% {
+  0%,
+  100% {
     opacity: 0.3;
   }
   50% {
@@ -569,7 +571,7 @@
     // Oculta depoimentos a partir do 3º no mobile
     @media (max-width: $breakpoint-sm) {
       .testimonial-card:nth-child(3),
-      .testimonial-card:nth-child(n+4) {
+      .testimonial-card:nth-child(n + 4) {
         display: none !important;
       }
     }
@@ -692,6 +694,7 @@
     .social-links {
       display: flex;
       gap: $spacing-md;
+      align-items: center;
 
       .social-link {
         width: 40px;
@@ -702,15 +705,34 @@
         align-items: center;
         justify-content: center;
         transition: $transition;
+        position: relative;
+        z-index: 1;
+        text-decoration: none;
+        flex-shrink: 0;
 
         &:hover {
           background: $secondary-color;
           transform: translateY(-4px);
+          z-index: 2;
         }
 
         .material-icons {
           color: white;
           font-size: 20px;
+          pointer-events: none;
+        }
+
+        svg {
+          color: white;
+          fill: white;
+          pointer-events: none;
+        }
+
+        .threads-icon {
+          color: white;
+          font-size: 24px;
+          font-weight: $font-weight-bold;
+          pointer-events: none;
         }
       }
     }
@@ -742,4 +764,3 @@
     padding: $spacing-2xl 0 $spacing-lg;
   }
 }
-

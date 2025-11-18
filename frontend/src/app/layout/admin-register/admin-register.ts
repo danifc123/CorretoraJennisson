@@ -18,7 +18,6 @@ export class AdminRegister {
   creci = '';
   password = '';
   confirmPassword = '';
-  secretCode = ''; // Código secreto para validar que é admin
 
   // Estados
   loading = signal(false);
@@ -38,7 +37,7 @@ export class AdminRegister {
     this.successMessage.set('');
 
     // Validações básicas
-    if (!this.name || !this.email || !this.creci || !this.password || !this.confirmPassword || !this.secretCode) {
+    if (!this.name || !this.email || !this.creci || !this.password || !this.confirmPassword) {
       this.errorMessage.set('Por favor, preencha todos os campos obrigatórios.');
       return;
     }
@@ -68,12 +67,6 @@ export class AdminRegister {
       return;
     }
 
-    // TODO: Validar código secreto com o backend
-    if (this.secretCode.length < 6) {
-      this.errorMessage.set('Código secreto inválido.');
-      return;
-    }
-
     // Simula loading
     this.loading.set(true);
 
@@ -84,17 +77,19 @@ export class AdminRegister {
         name: this.name,
         email: this.email,
         phone: this.phone,
-        creci: this.creci,
-        secretCode: this.secretCode
+        creci: this.creci
       });
-      
+
       // Simula sucesso
-      this.successMessage.set('Conta de administrador criada com sucesso! Redirecionando...');
-      
-      // Redireciona após 2 segundos
-      setTimeout(() => {
-        this.router.navigate(['/admin/login']);
-      }, 2000);
+      this.successMessage.set('Conta de administrador criada com sucesso! Você já pode fazer login.');
+
+      // Limpa os campos
+      this.name = '';
+      this.email = '';
+      this.phone = '';
+      this.creci = '';
+      this.password = '';
+      this.confirmPassword = '';
     }, 2000);
   }
 
@@ -141,7 +136,7 @@ export class AdminRegister {
    */
   formatPhone(): void {
     let value = this.phone.replace(/\D/g, '');
-    
+
     if (value.length <= 11) {
       if (value.length <= 10) {
         value = value.replace(/^(\d{2})(\d{4})(\d{4}).*/, '($1) $2-$3');
@@ -158,7 +153,7 @@ export class AdminRegister {
   formatCreci(): void {
     // Remove tudo que não é número
     this.creci = this.creci.replace(/\D/g, '');
-    
+
     // Limita a 10 dígitos
     if (this.creci.length > 10) {
       this.creci = this.creci.substring(0, 10);

@@ -23,7 +23,7 @@ export class Contato {
   successMessage = signal('');
   // TODO: Conectar com serviço de autenticação
   // Para testar estado logado, mude para: isLoggedIn = signal(true);
-  isLoggedIn = signal(true); // ← TEMPORÁRIO: Testando estado logado
+  isLoggedIn = signal(false);
 
   // Dados do usuário logado (simulado)
   loggedUser = {
@@ -36,10 +36,10 @@ export class Contato {
   corretor = {
     name: 'Jenisson Luckwü',
     creci: 'CRECI 11639',
-    phone: '(00) 00000-0000',
-    email: 'contato@jenissonluckwu.com.br',
-    whatsapp: '5500000000000',
-    address: 'Endereço da Corretora',
+    phone: '(83) 99919-9475',
+    email: 'jenissonluckwu_imoveis@gmail.com',
+    whatsapp: '5583999199475',
+    address: 'João Pessoa - PB',
     horario: 'Segunda a Sexta: 9h às 18h'
   };
 

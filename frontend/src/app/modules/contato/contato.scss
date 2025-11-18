@@ -45,16 +45,24 @@
   }
 }
 
-// Container Principal
+// Container Principal - 3 Colunas
 .contato-container {
-  max-width: 1200px;
+  max-width: 1400px;
   margin: -80px auto 0;
   padding: 0 $spacing-xl $spacing-3xl;
   display: grid;
-  grid-template-columns: 1fr 1.5fr;
-  gap: $spacing-3xl;
+  grid-template-columns: 1fr 1.5fr 1fr;
+  gap: $spacing-2xl;
   position: relative;
   z-index: 2;
+
+  @media (max-width: $breakpoint-lg) {
+    grid-template-columns: 1fr 1.5fr;
+
+    .contact-info-side {
+      grid-column: 1 / -1;
+    }
+  }
 
   @media (max-width: $breakpoint-md) {
     grid-template-columns: 1fr;
@@ -65,9 +73,9 @@
 }
 
 // ===================
-// INFORMAÇÕES DE CONTATO
+// COLUNA 1 - CONTATO RÁPIDO
 // ===================
-.contato-info {
+.contact-quick {
   .info-header {
     text-align: center;
     margin-bottom: $spacing-2xl;
@@ -126,6 +134,12 @@
 
     .card-icon {
       background: linear-gradient(135deg, #25d366 0%, #128c7e 100%);
+
+      svg {
+        width: 32px;
+        height: 32px;
+        color: white;
+      }
     }
 
     &:hover .card-action {
@@ -197,47 +211,78 @@
   }
 }
 
-// Informações Adicionais
-.additional-info {
-  background: white;
-  padding: $spacing-xl;
-  border-radius: $border-radius;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-
-  .info-item {
-    display: flex;
-    align-items: flex-start;
-    gap: $spacing-md;
-    padding: $spacing-md 0;
-
-    &:not(:last-child) {
-      border-bottom: 1px solid #e0e0e0;
-    }
+// ===================
+// COLUNA 3 - INFORMAÇÕES ADICIONAIS
+// ===================
+.contact-info-side {
+  .info-header {
+    text-align: center;
+    margin-bottom: $spacing-2xl;
+    padding: $spacing-xl;
+    background: white;
+    border-radius: $border-radius;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 
     .material-icons {
-      font-size: 24px;
+      font-size: 48px;
       color: $secondary-color;
-      margin-top: 2px;
+      margin-bottom: $spacing-md;
     }
 
-    strong {
-      display: block;
-      font-size: $font-size-base;
-      font-weight: $font-weight-semibold;
+    h2 {
+      font-size: $font-size-2xl;
+      font-weight: $font-weight-bold;
       color: $primary-color;
-      margin-bottom: $spacing-xs;
+      margin-bottom: $spacing-sm;
     }
 
     p {
-      margin: 0;
-      font-size: $font-size-sm;
       color: $text-muted;
+      font-size: $font-size-base;
+    }
+  }
+
+  .additional-info {
+    background: white;
+    padding: $spacing-xl;
+    border-radius: $border-radius;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+
+    .info-item {
+      display: flex;
+      align-items: flex-start;
+      gap: $spacing-md;
+      padding: $spacing-md 0;
+
+      &:not(:last-child) {
+        border-bottom: 1px solid #e0e0e0;
+      }
+
+      .material-icons {
+        font-size: 24px;
+        color: $secondary-color;
+        margin-top: 2px;
+      }
+
+      strong {
+        display: block;
+        font-size: $font-size-base;
+        font-weight: $font-weight-semibold;
+        color: $primary-color;
+        margin-bottom: $spacing-xs;
+      }
+
+      p {
+        margin: 0;
+        font-size: $font-size-sm;
+        color: $text-muted;
+      }
     }
   }
 }
 
 // ===================
-// FORMULÁRIO DE CONTATO
+// COLUNA 2 - FORMULÁRIO DE CONTATO
 // ===================
 .contato-form-wrapper {
   background: white;
