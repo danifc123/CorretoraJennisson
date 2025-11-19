@@ -1,16 +1,20 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, NgFor, NgIf } from '@angular/common';
 import { RouterLink } from '@angular/router';
+import { ImovelService, Imovel, StatusImovel } from '../../services/imovel.service';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, NgIf, NgFor, RouterLink],
   templateUrl: './home.html',
   styleUrls: ['./home.scss']
 })
 export class Home implements OnInit, OnDestroy {
   private resizeListener: any;
+  featuredImoveis: Imovel[] = [];
+  loadingFeatured = false;
+  featuredError = '';
   // Serviços/Categorias disponíveis
   services = [
     {
@@ -55,10 +59,13 @@ export class Home implements OnInit, OnDestroy {
   currentIndex = 0;
   itemsPerView = 3;
 
+  constructor(private imovelService: ImovelService) {}
+
   ngOnInit() {
     this.updateItemsPerView();
     this.resizeListener = () => this.updateItemsPerView();
     window.addEventListener('resize', this.resizeListener);
+    this.carregarDestaques();
   }
 
   ngOnDestroy() {
@@ -209,6 +216,50 @@ export class Home implements OnInit, OnDestroy {
         this.prevSlide();
       }
     }
+  }
+
+  /**
+   * Carrega os imóveis em destaque (status disponível mais recentes) limitando em 3
+   */
+  private carregarDestaques(): void {
+    this.loadingFeatured = true;
+    this.featuredError = '';
+
+    this.imovelService.getAll().subscribe({
+      next: (imoveis) => {
+        const disponiveis = imoveis
+          .filter(imovel => imovel.status === StatusImovel.Disponivel)
+          .sort((a, b) => {
+            const dataA = a.created_at ? new Date(a.created_at).getTime() : 0;
+            const dataB = b.created_at ? new Date(b.created_at).getTime() : 0;
+            return dataB - dataA;
+          });
+
+        this.featuredImoveis = disponiveis.slice(0, 3);
+        this.loadingFeatured = false;
+      },
+      error: (error) => {
+        console.error('Erro ao carregar imóveis em destaque:', error);
+        this.featuredError = 'Não foi possível carregar os imóveis em destaque no momento.';
+        this.loadingFeatured = false;
+      }
+    });
+  }
+
+  formatarPreco(valor: number): string {
+    return new Intl.NumberFormat('pt-BR', {
+      style: 'currency',
+      currency: 'BRL',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0
+    }).format(valor);
+  }
+
+  getImagemUrl(imovel: Imovel): string {
+    if (imovel.imagens && imovel.imagens.length > 0) {
+      return imovel.imagens[0].url;
+    }
+    return '/images/placeholder-imovel.jpg';
   }
 }
 
