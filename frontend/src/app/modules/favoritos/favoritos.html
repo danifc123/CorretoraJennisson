@@ -14,8 +14,8 @@
       <div class="header-info">
         <h2>Seus Imóveis Favoritos</h2>
         <p class="favoritos-count">
-          <strong>{{ favoritos().length }}</strong>
-          @if (favoritos().length === 1) {
+          <strong>{{ imoveis().length }}</strong>
+          @if (imoveis().length === 1) {
           <span>imóvel favoritado</span>
           } @else {
           <span>imóveis favoritados</span>
@@ -23,7 +23,7 @@
         </p>
       </div>
 
-      @if (favoritos().length > 0) {
+      @if (imoveis().length > 0) {
       <button type="button"
               class="btn-clear-all"
               (click)="limparFavoritos()"
@@ -36,9 +36,9 @@
     </div>
 
     <!-- Grid de Favoritos -->
-    @if (favoritos().length > 0) {
+    @if (imoveis().length > 0) {
     <div class="favoritos-grid">
-      @for (imovel of favoritos(); track imovel.id) {
+      @for (imovel of imoveis(); track imovel.id) {
       <article class="favorito-card">
         <!-- Botão Remover -->
         <button type="button"
@@ -51,17 +51,10 @@
 
         <!-- Imagem -->
         <div class="favorito-image">
-          @if (imovel.imagem) {
-          <img [src]="imovel.imagem"
+          <img [src]="getImagemUrl(imovel)"
                [alt]="imovel.titulo"
                title="Imagem do imóvel"
                [attr.title]="imovel.titulo" />
-          } @else {
-          <div class="favorito-image-placeholder">
-            <span class="material-icons">home</span>
-            <p>Imagem não disponível</p>
-          </div>
-          }
         </div>
 
         <!-- Informações -->
@@ -70,34 +63,18 @@
 
           <p class="favorito-location">
             <span class="material-icons">location_on</span>
-            {{ imovel.bairro }}, {{ imovel.cidade }}
+            {{ imovel.endereco }}, {{ imovel.cidade }} - {{ imovel.estado }}
           </p>
 
           <div class="favorito-features">
-            @if (imovel.quartos) {
             <span class="feature-item">
-              <span class="material-icons">bed</span>
-              {{ imovel.quartos }}
+              <span class="material-icons">home</span>
+              {{ imovel.tipoImovel }}
             </span>
-            }
-            @if (imovel.banheiros) {
             <span class="feature-item">
-              <span class="material-icons">bathroom</span>
-              {{ imovel.banheiros }}
+              <span class="material-icons">info</span>
+              {{ imovel.status }}
             </span>
-            }
-            @if (imovel.area) {
-            <span class="feature-item">
-              <span class="material-icons">square_foot</span>
-              {{ imovel.area }}m²
-            </span>
-            }
-            @if (imovel.vagas) {
-            <span class="feature-item">
-              <span class="material-icons">directions_car</span>
-              {{ imovel.vagas }}
-            </span>
-            }
           </div>
 
           <p class="favorito-description">{{ imovel.descricao }}</p>

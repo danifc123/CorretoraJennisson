@@ -1,22 +1,9 @@
-import { Component, signal, computed } from '@angular/core';
+import { Component, signal, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
-
-interface ImovelFavorito {
-  id: number;
-  titulo: string;
-  tipo: string;
-  localizacao: string;
-  bairro: string;
-  cidade: string;
-  preco: number;
-  quartos?: number;
-  banheiros?: number;
-  area?: number;
-  vagas?: number;
-  imagem?: string;
-  descricao: string;
-}
+import { Router, RouterLink } from '@angular/router';
+import { FavoritoService, Favorito } from '../../services/favorito.service';
+import { ImovelService, Imovel } from '../../services/imovel.service';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-favoritos',
@@ -25,43 +12,92 @@ interface ImovelFavorito {
   templateUrl: './favoritos.html',
   styleUrl: './favoritos.scss'
 })
-export class Favoritos {
-  // Estado de login (simulado - depois conectar com serviço de auth)
-  isLoggedIn = signal(true); // TODO: Conectar com AuthService
+export class Favoritos implements OnInit {
+  // Estados
+  loading = signal(false);
+  errorMessage = signal('');
+  isLoggedIn = signal(false);
+  currentUser = signal<any>(null);
 
-  // Dados de exemplo (depois será substituído por chamada à API)
-  favoritos = signal<ImovelFavorito[]>([
-    {
-      id: 1,
-      titulo: 'Casa moderna com 3 quartos',
-      tipo: 'Casa',
-      localizacao: 'Manaíra',
-      bairro: 'Manaíra',
-      cidade: 'João Pessoa',
-      preco: 450000,
-      quartos: 3,
-      banheiros: 2,
-      area: 150,
-      vagas: 2,
-      descricao: 'Casa moderna em ótima localização, próximo à praia.',
-      imagem: undefined
-    },
-    {
-      id: 2,
-      titulo: 'Apartamento 2 quartos',
-      tipo: 'Apartamento',
-      localizacao: 'Tambaú',
-      bairro: 'Tambaú',
-      cidade: 'João Pessoa',
-      preco: 320000,
-      quartos: 2,
-      banheiros: 2,
-      area: 80,
-      vagas: 1,
-      descricao: 'Apartamento bem localizado próximo ao centro comercial.',
-      imagem: undefined
+  // Dados
+  favoritos = signal<Favorito[]>([]);
+  imoveis = signal<Imovel[]>([]);
+
+  constructor(
+    private favoritoService: FavoritoService,
+    private imovelService: ImovelService,
+    private authService: AuthService,
+    private router: Router
+  ) {
+    // Inicializa signals de autenticação
+    this.isLoggedIn = this.authService.isAuthenticated;
+    this.currentUser = this.authService.currentUser;
+  }
+
+  ngOnInit(): void {
+    // Verifica se está logado
+    if (!this.isLoggedIn()) {
+      this.router.navigate(['/login'], {
+        queryParams: { returnUrl: '/favoritos' }
+      });
+      return;
     }
-  ]);
+
+    this.carregarFavoritos();
+  }
+
+  /**
+   * Carrega favoritos do usuário logado
+   */
+  carregarFavoritos(): void {
+    const user = this.currentUser();
+    if (!user) {
+      this.router.navigate(['/login']);
+      return;
+    }
+
+    this.loading.set(true);
+    this.errorMessage.set('');
+
+    this.favoritoService.getByUsuarioId(user.userId).subscribe({
+      next: (favoritos) => {
+        this.favoritos.set(favoritos);
+
+        // Carrega dados completos dos imóveis
+        if (favoritos.length > 0) {
+          this.carregarImoveis(favoritos.map(f => f.imovel_Id));
+        } else {
+          this.imoveis.set([]);
+          this.loading.set(false);
+        }
+      },
+      error: (error) => {
+        console.error('Erro ao carregar favoritos:', error);
+        this.errorMessage.set('Erro ao carregar favoritos. Tente novamente mais tarde.');
+        this.loading.set(false);
+      }
+    });
+  }
+
+  /**
+   * Carrega dados completos dos imóveis favoritados
+   */
+  private carregarImoveis(imovelIds: number[]): void {
+    const imoveisPromises = imovelIds.map(id =>
+      this.imovelService.getById(id).toPromise()
+    );
+
+    Promise.all(imoveisPromises).then(imoveis => {
+      // Filtra undefined (caso algum imóvel não exista mais)
+      const imoveisValidos = imoveis.filter(i => i !== undefined) as Imovel[];
+      this.imoveis.set(imoveisValidos);
+      this.loading.set(false);
+    }).catch(error => {
+      console.error('Erro ao carregar imóveis:', error);
+      this.errorMessage.set('Erro ao carregar dados dos imóveis.');
+      this.loading.set(false);
+    });
+  }
 
   /**
    * Formata preço para exibição
@@ -76,15 +112,41 @@ export class Favoritos {
   }
 
   /**
+   * Obtém URL da primeira imagem do imóvel
+   */
+  getImagemUrl(imovel: Imovel): string {
+    if (imovel.imagens && imovel.imagens.length > 0) {
+      return imovel.imagens[0].url;
+    }
+    return '/images/placeholder-imovel.jpg';
+  }
+
+  /**
    * Remove imóvel dos favoritos
    */
-  removerFavorito(imovel: ImovelFavorito): void {
+  removerFavorito(imovel: Imovel): void {
+    const user = this.currentUser();
+    if (!user) return;
+
     if (!confirm(`Tem certeza que deseja remover "${imovel.titulo}" dos seus favoritos?`)) {
       return;
     }
 
-    // TODO: Implementar chamada à API
-    this.favoritos.set(this.favoritos().filter(f => f.id !== imovel.id));
+    // Encontra o favorito correspondente
+    const favorito = this.favoritos().find(f => f.imovel_Id === imovel.id);
+    if (!favorito) return;
+
+    this.favoritoService.remove(favorito.id).subscribe({
+      next: () => {
+        // Atualiza a lista local
+        this.favoritos.set(this.favoritos().filter(f => f.id !== favorito.id));
+        this.imoveis.set(this.imoveis().filter(i => i.id !== imovel.id));
+      },
+      error: (error) => {
+        console.error('Erro ao remover favorito:', error);
+        alert('Erro ao remover dos favoritos. Tente novamente.');
+      }
+    });
   }
 
   /**
@@ -95,8 +157,32 @@ export class Favoritos {
       return;
     }
 
-    // TODO: Implementar chamada à API
-    this.favoritos.set([]);
+    const user = this.currentUser();
+    if (!user) return;
+
+    this.loading.set(true);
+
+    // Remove todos os favoritos
+    const favoritos = this.favoritos();
+    const removals = favoritos.map(favorito =>
+      this.favoritoService.remove(favorito.id).toPromise()
+    );
+
+    Promise.all(removals).then(() => {
+      this.favoritos.set([]);
+      this.imoveis.set([]);
+      this.loading.set(false);
+    }).catch(error => {
+      console.error('Erro ao remover favoritos:', error);
+      alert('Erro ao remover favoritos. Tente novamente.');
+      this.loading.set(false);
+    });
+  }
+
+  /**
+   * Verifica se há favoritos
+   */
+  temFavoritos(): boolean {
+    return this.imoveis().length > 0;
   }
 }
-
