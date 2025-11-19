@@ -161,14 +161,11 @@ export class AuthService {
   }
 
   /**
-   * Redireciona após login baseado no role
+   * Redireciona após login - sempre para home
    */
   private redirectAfterLogin(role: string): void {
-    if (role === 'Admin') {
-      this.router.navigate(['/admin/imoveis']);
-    } else {
-      this.router.navigate(['/imoveis']);
-    }
+    // Tanto Admin quanto User são redirecionados para home após login
+    this.router.navigate(['/']);
   }
 
   /**

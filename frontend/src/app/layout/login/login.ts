@@ -28,14 +28,9 @@ export class Login {
     private route: ActivatedRoute,
     private authService: AuthService
   ) {
-    // Verifica se já está logado
+    // Verifica se já está logado - redireciona para home
     if (this.authService.isLoggedIn()) {
-      const user = this.authService.getCurrentUser();
-      if (user?.role === 'Admin') {
-        this.router.navigate(['/admin/imoveis']);
-      } else {
-        this.router.navigate(['/imoveis']);
-      }
+      this.router.navigate(['/']);
     }
   }
 
@@ -78,12 +73,14 @@ export class Login {
   private loginAuto(): void {
     this.authService.login(this.email, this.password).subscribe({
       next: () => {
-        // Login bem-sucedido - o AuthService já redireciona
+        // Login bem-sucedido - o AuthService já redireciona para home
         this.loading.set(false);
-        const user = this.authService.getCurrentUser();
-        const returnUrl = this.route.snapshot.queryParams['returnUrl'] ||
-                         (user?.role === 'Admin' ? '/admin/imoveis' : '/imoveis');
-        this.router.navigate([returnUrl]);
+        // Se houver returnUrl, usa ele, senão o AuthService redireciona para home
+        const returnUrl = this.route.snapshot.queryParams['returnUrl'];
+        if (returnUrl) {
+          this.router.navigate([returnUrl]);
+        }
+        // Caso contrário, o AuthService já redirecionou para home
       },
       error: (error) => {
         this.handleLoginError(error);
@@ -97,10 +94,14 @@ export class Login {
   private loginAsAdmin(): void {
     this.authService.loginAdmin(this.email, this.password).subscribe({
       next: () => {
-        // Login bem-sucedido - o AuthService já redireciona
+        // Login bem-sucedido - o AuthService já redireciona para home
         this.loading.set(false);
-        const returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/admin/imoveis';
-        this.router.navigate([returnUrl]);
+        // Se houver returnUrl, usa ele, senão o AuthService redireciona para home
+        const returnUrl = this.route.snapshot.queryParams['returnUrl'];
+        if (returnUrl) {
+          this.router.navigate([returnUrl]);
+        }
+        // Caso contrário, o AuthService já redirecionou para home
       },
       error: (error) => {
         this.handleLoginError(error);
@@ -114,10 +115,14 @@ export class Login {
   private loginAsUsuario(): void {
     this.authService.loginUsuario(this.email, this.password).subscribe({
       next: () => {
-        // Login bem-sucedido - o AuthService já redireciona
+        // Login bem-sucedido - o AuthService já redireciona para home
         this.loading.set(false);
-        const returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/imoveis';
-        this.router.navigate([returnUrl]);
+        // Se houver returnUrl, usa ele, senão o AuthService redireciona para home
+        const returnUrl = this.route.snapshot.queryParams['returnUrl'];
+        if (returnUrl) {
+          this.router.navigate([returnUrl]);
+        }
+        // Caso contrário, o AuthService já redirecionou para home
       },
       error: (error) => {
         this.handleLoginError(error);
