@@ -1,24 +1,10 @@
-import { Component, signal, computed } from '@angular/core';
+import { Component, signal, computed, OnInit, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { RouterLink } from '@angular/router';
-
-interface Imovel {
-  id: number;
-  titulo: string;
-  tipo: string; // 'Casa', 'Apartamento', 'Terreno', etc.
-  localizacao: string;
-  bairro: string;
-  cidade: string;
-  preco: number;
-  quartos?: number;
-  banheiros?: number;
-  area?: number; // em m²
-  vagas?: number;
-  imagem?: string;
-  descricao: string;
-  favoritado?: boolean;
-}
+import { Router, RouterLink } from '@angular/router';
+import { ImovelService, Imovel, StatusImovel, TipoImovel } from '../../services/imovel.service';
+import { FavoritoService } from '../../services/favorito.service';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-imoveis',
@@ -27,99 +13,148 @@ interface Imovel {
   templateUrl: './imoveis.html',
   styleUrls: ['./imoveis.scss']
 })
-export class Imoveis {
+export class Imoveis implements OnInit {
   // Busca
   searchTerm = signal('');
 
   // Filtros
   tipoSelecionado = signal<string>('');
   cidadeSelecionada = signal<string>('');
-  bairroSelecionado = signal<string>('');
   precoMin = signal<number | null>(null);
   precoMax = signal<number | null>(null);
-  quartosSelecionados = signal<number | null>(null);
-  banheirosSelecionados = signal<number | null>(null);
+  statusSelecionado = signal<StatusImovel | ''>('');
 
   // Ordenação
-  ordenacao = signal<string>('relevante'); // 'relevante', 'preco-asc', 'preco-desc', 'maior-area'
+  ordenacao = signal<string>('relevante');
   itensPorPagina = signal<number>(12);
   paginaAtual = signal<number>(1);
 
-  // Estado de login (simulado - depois conectar com serviço de auth)
+  // Estados
+  loading = signal(false);
+  errorMessage = signal('');
+
+  // Dados
+  imoveis = signal<Imovel[]>([]);
+  favoritosIds = signal<Set<number>>(new Set());
+
+  // Estado de autenticação (será inicializado no constructor)
   isLoggedIn = signal(false);
+  currentUser = signal<any>(null);
 
-  // Dados de exemplo (depois será substituído por chamada à API)
-  imoveis = signal<Imovel[]>([
-    {
-      id: 1,
-      titulo: 'Casa moderna com 3 quartos',
-      tipo: 'Casa',
-      localizacao: 'Manaíra',
-      bairro: 'Manaíra',
-      cidade: 'João Pessoa',
-      preco: 450000,
-      quartos: 3,
-      banheiros: 2,
-      area: 150,
-      vagas: 2,
-      descricao: 'Casa moderna em ótima localização, próximo à praia.',
-      favoritado: false
-    },
-    {
-      id: 2,
-      titulo: 'Apartamento 2 quartos',
-      tipo: 'Apartamento',
-      localizacao: 'Tambaú',
-      bairro: 'Tambaú',
-      cidade: 'João Pessoa',
-      preco: 320000,
-      quartos: 2,
-      banheiros: 2,
-      area: 80,
-      vagas: 1,
-      descricao: 'Apartamento bem localizado próximo ao centro comercial.',
-      favoritado: false
-    },
-    {
-      id: 3,
-      titulo: 'Terreno 300m²',
-      tipo: 'Terreno',
-      localizacao: 'Bessa',
-      bairro: 'Bessa',
-      cidade: 'João Pessoa',
-      preco: 280000,
-      area: 300,
-      descricao: 'Terreno plano, ideal para construção.',
-      favoritado: false
+  // Opções de filtros (serão carregadas dinamicamente)
+  tipos = Object.values(TipoImovel);
+  statusOptions = Object.values(StatusImovel);
+  cidades = signal<string[]>([]);
+
+  constructor(
+    private imovelService: ImovelService,
+    private favoritoService: FavoritoService,
+    private authService: AuthService,
+    private router: Router
+  ) {
+    // Inicializa signals de autenticação
+    this.isLoggedIn = this.authService.isAuthenticated;
+    this.currentUser = this.authService.currentUser;
+
+    // Effect para recarregar favoritos quando o usuário logar
+    effect(() => {
+      if (this.isLoggedIn() && this.currentUser()) {
+        this.carregarFavoritos();
+      } else {
+        this.favoritosIds.set(new Set());
+      }
+    });
+  }
+
+  ngOnInit(): void {
+    this.carregarImoveis();
+    if (this.isLoggedIn()) {
+      this.carregarFavoritos();
     }
-  ]);
+  }
 
-  // Opções de filtros
-  tipos = ['Casa', 'Apartamento', 'Terreno', 'Sobrado', 'Kitnet', 'Studio'];
-  cidades = ['João Pessoa', 'Cabedelo', 'Bayeux', 'Santa Rita'];
-  bairros = ['Manaíra', 'Tambaú', 'Bessa', 'Cabo Branco', 'Jardim Oceania'];
-  opcoesQuartos = [1, 2, 3, 4, 5];
-  opcoesBanheiros = [1, 2, 3, 4];
+  /**
+   * Carrega todos os imóveis da API
+   */
+  carregarImoveis(): void {
+    this.loading.set(true);
+    this.errorMessage.set('');
 
-  // Imóveis filtrados e ordenados
+    this.imovelService.getAll().subscribe({
+      next: (imoveis) => {
+        this.imoveis.set(imoveis);
+        this.extrairCidades(imoveis);
+        this.loading.set(false);
+      },
+      error: (error) => {
+        console.error('Erro ao carregar imóveis:', error);
+        this.errorMessage.set('Erro ao carregar imóveis. Tente novamente mais tarde.');
+        this.loading.set(false);
+      }
+    });
+  }
+
+  /**
+   * Extrai lista única de cidades dos imóveis
+   */
+  private extrairCidades(imoveis: Imovel[]): void {
+    const cidadesSet = new Set<string>();
+
+    imoveis.forEach(imovel => {
+      if (imovel.cidade) cidadesSet.add(imovel.cidade);
+    });
+
+    this.cidades.set(Array.from(cidadesSet).sort());
+  }
+
+  /**
+   * Carrega favoritos do usuário logado
+   */
+  carregarFavoritos(): void {
+    const user = this.currentUser();
+    if (!user) return;
+
+    this.favoritoService.getByUsuarioId(user.userId).subscribe({
+      next: (favoritos) => {
+        const ids = new Set(favoritos.map(f => f.imovel_Id));
+        this.favoritosIds.set(ids);
+      },
+      error: (error) => {
+        console.error('Erro ao carregar favoritos:', error);
+        // Não mostra erro para o usuário, apenas loga
+      }
+    });
+  }
+
+  /**
+   * Verifica se um imóvel está favoritado
+   */
+  isFavoritado(imovelId: number): boolean {
+    return this.favoritosIds().has(imovelId);
+  }
+
+  /**
+   * Imóveis filtrados e ordenados
+   */
   imoveisFiltrados = computed(() => {
     let resultado = [...this.imoveis()];
 
-    // Filtro por busca (título, localização, descrição)
+    // Filtro por busca (título, endereco, descrição)
     const busca = this.searchTerm().toLowerCase();
     if (busca) {
       resultado = resultado.filter(imovel =>
-        imovel.titulo.toLowerCase().includes(busca) ||
-        imovel.localizacao.toLowerCase().includes(busca) ||
-        imovel.descricao.toLowerCase().includes(busca) ||
-        imovel.bairro.toLowerCase().includes(busca) ||
-        imovel.cidade.toLowerCase().includes(busca)
+        imovel.titulo?.toLowerCase().includes(busca) ||
+        imovel.endereco?.toLowerCase().includes(busca) ||
+        imovel.descricao?.toLowerCase().includes(busca) ||
+        imovel.cidade?.toLowerCase().includes(busca)
       );
     }
 
     // Filtro por tipo
     if (this.tipoSelecionado()) {
-      resultado = resultado.filter(imovel => imovel.tipo === this.tipoSelecionado());
+      resultado = resultado.filter(imovel =>
+        imovel.tipoImovel === this.tipoSelecionado()
+      );
     }
 
     // Filtro por cidade
@@ -127,9 +162,9 @@ export class Imoveis {
       resultado = resultado.filter(imovel => imovel.cidade === this.cidadeSelecionada());
     }
 
-    // Filtro por bairro
-    if (this.bairroSelecionado()) {
-      resultado = resultado.filter(imovel => imovel.bairro === this.bairroSelecionado());
+    // Filtro por status
+    if (this.statusSelecionado()) {
+      resultado = resultado.filter(imovel => imovel.status === this.statusSelecionado());
     }
 
     // Filtro por preço
@@ -140,16 +175,6 @@ export class Imoveis {
       resultado = resultado.filter(imovel => imovel.preco <= this.precoMax()!);
     }
 
-    // Filtro por quartos
-    if (this.quartosSelecionados() !== null) {
-      resultado = resultado.filter(imovel => imovel.quartos === this.quartosSelecionados());
-    }
-
-    // Filtro por banheiros
-    if (this.banheirosSelecionados() !== null) {
-      resultado = resultado.filter(imovel => imovel.banheiros === this.banheirosSelecionados());
-    }
-
     // Ordenação
     switch (this.ordenacao()) {
       case 'preco-asc':
@@ -157,9 +182,6 @@ export class Imoveis {
         break;
       case 'preco-desc':
         resultado.sort((a, b) => b.preco - a.preco);
-        break;
-      case 'maior-area':
-        resultado.sort((a, b) => (b.area || 0) - (a.area || 0));
         break;
       default:
         // Relevante - mantém ordem original
@@ -198,18 +220,83 @@ export class Imoveis {
   }
 
   /**
+   * Obtém URL da primeira imagem do imóvel
+   */
+  getImagemUrl(imovel: Imovel): string {
+    if (imovel.imagens && imovel.imagens.length > 0) {
+      return imovel.imagens[0].url;
+    }
+    // Imagem padrão ou placeholder
+    return '/images/placeholder-imovel.jpg';
+  }
+
+  /**
    * Toggle favorito (requer login)
    */
   toggleFavorito(imovel: Imovel): void {
     if (!this.isLoggedIn()) {
-      // TODO: Redirecionar para login ou mostrar modal
-      alert('Faça login para adicionar aos favoritos');
+      this.router.navigate(['/login'], {
+        queryParams: { returnUrl: this.router.url }
+      });
       return;
     }
 
-    // TODO: Implementar chamada à API
-    imovel.favoritado = !imovel.favoritado;
-    console.log(`Imóvel ${imovel.id} ${imovel.favoritado ? 'adicionado' : 'removido'} dos favoritos`);
+    const user = this.currentUser();
+    if (!user) return;
+
+    const isFavoritado = this.isFavoritado(imovel.id);
+
+    if (isFavoritado) {
+      // Remove favorito
+      this.favoritoService.getByUsuarioAndImovel(user.userId, imovel.id).subscribe({
+        next: (favorito) => {
+          if (!favorito) {
+            // Se não encontrou, apenas atualiza o estado local
+            const ids = new Set(this.favoritosIds());
+            ids.delete(imovel.id);
+            this.favoritosIds.set(ids);
+            return;
+          }
+
+          this.favoritoService.remove(favorito.id).subscribe({
+            next: () => {
+              const ids = new Set(this.favoritosIds());
+              ids.delete(imovel.id);
+              this.favoritosIds.set(ids);
+            },
+            error: (error) => {
+              console.error('Erro ao remover favorito:', error);
+              alert('Erro ao remover dos favoritos. Tente novamente.');
+            }
+          });
+        },
+        error: (error) => {
+          if (error.status === 404) {
+            // Já não está favoritado, apenas atualiza o estado local
+            const ids = new Set(this.favoritosIds());
+            ids.delete(imovel.id);
+            this.favoritosIds.set(ids);
+          }
+        }
+      });
+    } else {
+      // Adiciona favorito
+      this.favoritoService.add(user.userId, imovel.id).subscribe({
+        next: () => {
+          const ids = new Set(this.favoritosIds());
+          ids.add(imovel.id);
+          this.favoritosIds.set(ids);
+        },
+        error: (error) => {
+          console.error('Erro ao adicionar favorito:', error);
+          if (error.status === 400) {
+            alert('Este imóvel já está nos seus favoritos.');
+          } else {
+            alert('Erro ao adicionar aos favoritos. Tente novamente.');
+          }
+        }
+      });
+    }
   }
 
   /**
@@ -219,11 +306,9 @@ export class Imoveis {
     this.searchTerm.set('');
     this.tipoSelecionado.set('');
     this.cidadeSelecionada.set('');
-    this.bairroSelecionado.set('');
     this.precoMin.set(null);
     this.precoMax.set(null);
-    this.quartosSelecionados.set(null);
-    this.banheirosSelecionados.set(null);
+    this.statusSelecionado.set('');
     this.paginaAtual.set(1);
   }
 

@@ -64,24 +64,7 @@
                 title="Selecione a cidade"
                 aria-label="Cidade">
           <option value="">Todas</option>
-          <option *ngFor="let cidade of cidades" [value]="cidade">{{ cidade }}</option>
-        </select>
-      </div>
-
-      <!-- Bairro -->
-      <div class="filter-group">
-        <label for="bairro-imovel" class="filter-label">
-          <span class="material-icons">place</span>
-          Bairro
-        </label>
-        <select id="bairro-imovel"
-                class="filter-select"
-                [(ngModel)]="bairroSelecionado"
-                (ngModelChange)="onFiltroChange()"
-                title="Selecione o bairro"
-                aria-label="Bairro">
-          <option value="">Todos</option>
-          <option *ngFor="let bairro of bairros" [value]="bairro">{{ bairro }}</option>
+          <option *ngFor="let cidade of cidades()" [value]="cidade">{{ cidade }}</option>
         </select>
       </div>
 
@@ -106,37 +89,20 @@
         </div>
       </div>
 
-      <!-- Quartos -->
+      <!-- Status -->
       <div class="filter-group">
-        <label for="quartos-imovel" class="filter-label">
-          <span class="material-icons">bed</span>
-          Quartos
+        <label for="status-imovel" class="filter-label">
+          <span class="material-icons">info</span>
+          Status
         </label>
-        <select id="quartos-imovel"
+        <select id="status-imovel"
                 class="filter-select"
-                [(ngModel)]="quartosSelecionados"
+                [(ngModel)]="statusSelecionado"
                 (ngModelChange)="onFiltroChange()"
-                title="Selecione a quantidade de quartos"
-                aria-label="Quantidade de quartos">
-          <option [value]="null">Todos</option>
-          <option *ngFor="let qtd of opcoesQuartos" [value]="qtd">{{ qtd }}+ quartos</option>
-        </select>
-      </div>
-
-      <!-- Banheiros -->
-      <div class="filter-group">
-        <label for="banheiros-imovel" class="filter-label">
-          <span class="material-icons">bathroom</span>
-          Banheiros
-        </label>
-        <select id="banheiros-imovel"
-                class="filter-select"
-                [(ngModel)]="banheirosSelecionados"
-                (ngModelChange)="onFiltroChange()"
-                title="Selecione a quantidade de banheiros"
-                aria-label="Quantidade de banheiros">
-          <option [value]="null">Todos</option>
-          <option *ngFor="let qtd of opcoesBanheiros" [value]="qtd">{{ qtd }}+ banheiros</option>
+                title="Selecione o status"
+                aria-label="Status do imóvel">
+          <option value="">Todos</option>
+          <option *ngFor="let status of statusOptions" [value]="status">{{ status }}</option>
         </select>
       </div>
     </aside>
@@ -165,7 +131,6 @@
             <option value="relevante">Mais relevantes</option>
             <option value="preco-asc">Menor preço</option>
             <option value="preco-desc">Maior preço</option>
-            <option value="maior-area">Maior área</option>
           </select>
 
           <label for="itensPagina" class="sr-only">Itens por página</label>
@@ -188,29 +153,22 @@
           <!-- Botão de Favorito -->
           <button type="button"
                   class="favorite-btn"
-                  [class.favorited]="imovel.favoritado"
+                  [class.favorited]="isFavoritado(imovel.id)"
                   (click)="toggleFavorito(imovel)"
-                  [title]="imovel.favoritado ? 'Remover dos favoritos' : 'Adicionar aos favoritos'"
+                  [title]="isFavoritado(imovel.id) ? 'Remover dos favoritos' : 'Adicionar aos favoritos'"
                   aria-label="Favoritar imóvel">
             <span class="material-icons">
-              {{ imovel.favoritado ? 'favorite' : 'favorite_border' }}
+              {{ isFavoritado(imovel.id) ? 'favorite' : 'favorite_border' }}
             </span>
           </button>
 
           <!-- Imagem -->
           <div class="imovel-image">
-            @if (imovel.imagem) {
-            <img [src]="imovel.imagem"
+            <img [src]="getImagemUrl(imovel)"
                  [alt]="imovel.titulo"
                  title="Imagem do imóvel"
                  [attr.title]="imovel.titulo ? 'Imagem do imóvel: ' + imovel.titulo : 'Imagem do imóvel'"
                  loading="lazy" />
-            } @else {
-            <div class="imovel-image-placeholder">
-              <span class="material-icons">home</span>
-              <p>Imagem não disponível</p>
-            </div>
-            }
           </div>
 
           <!-- Informações -->
@@ -219,34 +177,18 @@
 
             <p class="imovel-location">
               <span class="material-icons">location_on</span>
-              {{ imovel.bairro }}, {{ imovel.cidade }}
+              {{ imovel.endereco }}, {{ imovel.cidade }} - {{ imovel.estado }}
             </p>
 
             <div class="imovel-features">
-              @if (imovel.quartos) {
               <span class="feature-item">
-                <span class="material-icons">bed</span>
-                {{ imovel.quartos }}
+                <span class="material-icons">home</span>
+                {{ imovel.tipoImovel }}
               </span>
-              }
-              @if (imovel.banheiros) {
               <span class="feature-item">
-                <span class="material-icons">bathroom</span>
-                {{ imovel.banheiros }}
+                <span class="material-icons">info</span>
+                {{ imovel.status }}
               </span>
-              }
-              @if (imovel.area) {
-              <span class="feature-item">
-                <span class="material-icons">square_foot</span>
-                {{ imovel.area }}m²
-              </span>
-              }
-              @if (imovel.vagas) {
-              <span class="feature-item">
-                <span class="material-icons">directions_car</span>
-                {{ imovel.vagas }}
-              </span>
-              }
             </div>
 
             <p class="imovel-description">{{ imovel.descricao }}</p>

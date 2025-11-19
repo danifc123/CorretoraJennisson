@@ -1,0 +1,100 @@
+<div class="imovel-detalhe-page">
+  @if (errorMessage()) {
+  <div class="alert alert-error">
+    <span class="material-icons">error</span>
+    <p>{{ errorMessage() }}</p>
+    <button type="button" class="btn-secondary" (click)="voltarParaLista()">
+      Voltar para imóveis
+    </button>
+  </div>
+  }
+
+  @if (loading()) {
+  <div class="loading-state">
+    <span class="material-icons">hourglass_top</span>
+    <p>Carregando detalhes do imóvel...</p>
+  </div>
+  } @else if (imovel()) {
+  <div class="header">
+    <button type="button" class="btn-back" (click)="voltarParaLista()">
+      <span class="material-icons">arrow_back</span>
+      Voltar
+    </button>
+    <div class="header-actions">
+      <button type="button"
+              class="favorite-btn"
+              [class.favorited]="isFavoritado()"
+              (click)="toggleFavorito()"
+              aria-label="Favoritar imóvel">
+        <span class="material-icons">
+          {{ isFavoritado() ? 'favorite' : 'favorite_border' }}
+        </span>
+        {{ isFavoritado() ? 'Remover favorito' : 'Salvar favorito' }}
+      </button>
+    </div>
+  </div>
+
+  <section class="imovel-details">
+    <div class="gallery">
+      <div class="gallery-main">
+        <img [src]="imagemAtual()"
+             [alt]="imovel()?.titulo || 'Imagem do imóvel'"
+             title="Imagem principal do imóvel"
+             loading="lazy">
+      </div>
+      @if (imagens().length > 1) {
+      <div class="gallery-thumbs">
+        @for (img of imagens(); track img.id; let i = $index) {
+        <button type="button"
+                [class.active]="galleryIndex() === i"
+                (click)="selecionarImagem(i)"
+                aria-label="Visualizar imagem adicional"
+                title="Visualizar imagem adicional">
+          <span class="sr-only">Ver imagem {{ i + 1 }}</span>
+          <img [src]="img.url"
+               [alt]="'Imagem ' + (i + 1)"
+               title="Miniatura do imóvel">
+        </button>
+        }
+      </div>
+      }
+    </div>
+
+    <div class="info">
+      <h1>{{ imovel()?.titulo }}</h1>
+      <p class="location">
+        <span class="material-icons">location_on</span>
+        {{ imovel()?.endereco }}, {{ imovel()?.cidade }} - {{ imovel()?.estado }}
+      </p>
+
+      <div class="meta">
+        <div class="meta-item">
+          <span class="label">Tipo</span>
+          <strong>{{ imovel()?.tipoImovel }}</strong>
+        </div>
+        <div class="meta-item">
+          <span class="label">Status</span>
+          <strong>{{ imovel()?.status }}</strong>
+        </div>
+        <div class="meta-item">
+          <span class="label">Preço</span>
+          <strong class="price">{{ imovel() ? formatarPreco(imovel()!.preco) : '' }}</strong>
+        </div>
+      </div>
+
+      <div class="description">
+        <h2>Descrição</h2>
+        <p>{{ imovel()?.descricao }}</p>
+      </div>
+
+      <div class="cta">
+        <button type="button" class="btn-primary" (click)="irParaContato()">
+          <span class="material-icons">call</span>
+          Falar com o corretor
+        </button>
+      </div>
+    </div>
+  </section>
+  }
+</div>
+
