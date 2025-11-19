@@ -16,6 +16,10 @@ export const routes: Routes = [
     loadComponent: () => import('./modules/imoveis/imoveis').then(m => m.Imoveis)
   },
   {
+    path: 'imoveis/:id',
+    loadComponent: () => import('./modules/imoveis/imovel-detalhe').then(m => m.ImovelDetalhe)
+  },
+  {
     path: 'contato',
     loadComponent: () => import('./modules/contato/contato').then(m => m.Contato)
   },
