@@ -40,23 +40,35 @@ namespace CorretoraJenissonLuckwuAPI.Controller
     {
       try
       {
+        // Tenta autenticar como root admin primeiro
         if (TryAuthenticateRootAdmin(request, out var rootResponse))
         {
           return Ok(rootResponse);
         }
 
+        // Busca administrador no banco de dados
         var administrador = await _administradorRepository.GetByEmailAsync(request.Email);
 
         if (administrador == null)
+        {
           return Unauthorized("Email ou senha inválidos");
+        }
 
-        if (!_passwordService.VerifyPassword(request.Senha, administrador.Senha))
+        // Verifica a senha
+        var isPasswordValid = _passwordService.VerifyPassword(request.Senha, administrador.Senha);
+        
+        if (!isPasswordValid)
+        {
           return Unauthorized("Email ou senha inválidos");
+        }
 
         return Ok(BuildLoginResponse(administrador.Id, administrador.Email, "Admin"));
       }
       catch (Exception ex)
       {
+        // Log do erro para debug (em produção, usar um logger apropriado)
+        Console.WriteLine($"Erro no login administrador: {ex.Message}");
+        Console.WriteLine($"Stack trace: {ex.StackTrace}");
         return StatusCode(500, $"Erro interno no servidor: {ex.Message}");
       }
     }
@@ -85,6 +97,53 @@ namespace CorretoraJenissonLuckwuAPI.Controller
     public Task<ActionResult<LoginResponse>> RefreshToken(RefreshTokenRequest request)
     {
       return Task.FromResult<ActionResult<LoginResponse>>(BadRequest("Refresh token não implementado completamente. Use login novamente."));
+    }
+
+    /// <summary>
+    /// Identifica o tipo de usuário (Admin ou User) baseado no email
+    /// </summary>
+    [HttpGet("identify-user-type")]
+    public async Task<ActionResult<UserTypeResponse>> IdentifyUserType([FromQuery] string email)
+    {
+      try
+      {
+        if (string.IsNullOrWhiteSpace(email))
+        {
+          return BadRequest("Email é obrigatório");
+        }
+
+        // Verifica se é root admin primeiro
+        var rootSection = _configuration.GetSection("RootAdmin");
+        var rootEnabled = rootSection.GetValue<bool>("Enabled");
+        var rootEmail = rootSection["Email"];
+
+        if (rootEnabled && !string.IsNullOrWhiteSpace(rootEmail) &&
+            string.Equals(email, rootEmail, StringComparison.OrdinalIgnoreCase))
+        {
+          return Ok(new UserTypeResponse { UserType = "Admin", Exists = true });
+        }
+
+        // Verifica se existe na tabela de administradores
+        var administrador = await _administradorRepository.GetByEmailAsync(email);
+        if (administrador != null)
+        {
+          return Ok(new UserTypeResponse { UserType = "Admin", Exists = true });
+        }
+
+        // Verifica se existe na tabela de usuários
+        var usuario = await _usuarioRepository.GetByEmailAsync(email);
+        if (usuario != null)
+        {
+          return Ok(new UserTypeResponse { UserType = "User", Exists = true });
+        }
+
+        // Email não encontrado em nenhuma tabela
+        return Ok(new UserTypeResponse { UserType = "", Exists = false });
+      }
+      catch (Exception ex)
+      {
+        return StatusCode(500, $"Erro interno no servidor: {ex.Message}");
+      }
     }
     #endregion
 

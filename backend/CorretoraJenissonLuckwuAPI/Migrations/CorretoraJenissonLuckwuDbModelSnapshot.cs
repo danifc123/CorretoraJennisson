@@ -22,7 +22,47 @@ namespace CorretoraJenissonLuckwuAPI.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("CorretoraJenissonLuckwuAPI.EFModel.Entities.ConteudoSite", b =>
+            modelBuilder.Entity("CorretoraJenissonLuckwuAPI.Models.Entities.Administrador", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("Created_at")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("ID_PFPJ")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Nome")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Senha")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Stream_user_id")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Telefone")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("Updated_at")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Administradores");
+                });
+
+            modelBuilder.Entity("CorretoraJenissonLuckwuAPI.Models.Entities.ConteudoSite", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -69,7 +109,7 @@ namespace CorretoraJenissonLuckwuAPI.Migrations
                     b.ToTable("ConteudosSite");
                 });
 
-            modelBuilder.Entity("CorretoraJenissonLuckwuAPI.EFModel.Entities.Favorito", b =>
+            modelBuilder.Entity("CorretoraJenissonLuckwuAPI.Models.Entities.Favorito", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -92,7 +132,7 @@ namespace CorretoraJenissonLuckwuAPI.Migrations
                     b.ToTable("Favoritos");
                 });
 
-            modelBuilder.Entity("CorretoraJenissonLuckwuAPI.EFModel.Entities.ImagemImovel", b =>
+            modelBuilder.Entity("CorretoraJenissonLuckwuAPI.Models.Entities.ImagemImovel", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -114,7 +154,7 @@ namespace CorretoraJenissonLuckwuAPI.Migrations
                     b.ToTable("ImagemImoveis");
                 });
 
-            modelBuilder.Entity("CorretoraJenissonLuckwuAPI.EFModel.Entities.Imovel", b =>
+            modelBuilder.Entity("CorretoraJenissonLuckwuAPI.Models.Entities.Imovel", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -162,7 +202,7 @@ namespace CorretoraJenissonLuckwuAPI.Migrations
                     b.ToTable("Imoveis");
                 });
 
-            modelBuilder.Entity("CorretoraJenissonLuckwuAPI.EFModel.Entities.Usuario", b =>
+            modelBuilder.Entity("CorretoraJenissonLuckwuAPI.Models.Entities.Usuario", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -182,7 +222,6 @@ namespace CorretoraJenissonLuckwuAPI.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("Stream_user_id")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("Telefone")
@@ -196,56 +235,15 @@ namespace CorretoraJenissonLuckwuAPI.Migrations
                     b.ToTable("Usuarios");
                 });
 
-            modelBuilder.Entity("CorretoraJenissonLuckwuAPI.Models.Administrador", b =>
+            modelBuilder.Entity("CorretoraJenissonLuckwuAPI.Models.Entities.Favorito", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("Created_at")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("ID_PFPJ")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Nome")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Senha")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Stream_user_id")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Telefone")
-                        .HasColumnType("text");
-
-                    b.Property<DateTime>("Updated_at")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Administradores");
-                });
-
-            modelBuilder.Entity("CorretoraJenissonLuckwuAPI.EFModel.Entities.Favorito", b =>
-                {
-                    b.HasOne("CorretoraJenissonLuckwuAPI.EFModel.Entities.Imovel", "Imovel")
+                    b.HasOne("CorretoraJenissonLuckwuAPI.Models.Entities.Imovel", "Imovel")
                         .WithMany("Favoritos")
                         .HasForeignKey("Imovel_Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("CorretoraJenissonLuckwuAPI.EFModel.Entities.Usuario", "Usuario")
+                    b.HasOne("CorretoraJenissonLuckwuAPI.Models.Entities.Usuario", "Usuario")
                         .WithMany("Favoritos")
                         .HasForeignKey("Usuario_Id")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -256,9 +254,9 @@ namespace CorretoraJenissonLuckwuAPI.Migrations
                     b.Navigation("Usuario");
                 });
 
-            modelBuilder.Entity("CorretoraJenissonLuckwuAPI.EFModel.Entities.ImagemImovel", b =>
+            modelBuilder.Entity("CorretoraJenissonLuckwuAPI.Models.Entities.ImagemImovel", b =>
                 {
-                    b.HasOne("CorretoraJenissonLuckwuAPI.EFModel.Entities.Imovel", "Imovel")
+                    b.HasOne("CorretoraJenissonLuckwuAPI.Models.Entities.Imovel", "Imovel")
                         .WithMany("Imagens")
                         .HasForeignKey("Imovel_Id")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -267,14 +265,14 @@ namespace CorretoraJenissonLuckwuAPI.Migrations
                     b.Navigation("Imovel");
                 });
 
-            modelBuilder.Entity("CorretoraJenissonLuckwuAPI.EFModel.Entities.Imovel", b =>
+            modelBuilder.Entity("CorretoraJenissonLuckwuAPI.Models.Entities.Imovel", b =>
                 {
                     b.Navigation("Favoritos");
 
                     b.Navigation("Imagens");
                 });
 
-            modelBuilder.Entity("CorretoraJenissonLuckwuAPI.EFModel.Entities.Usuario", b =>
+            modelBuilder.Entity("CorretoraJenissonLuckwuAPI.Models.Entities.Usuario", b =>
                 {
                     b.Navigation("Favoritos");
                 });
