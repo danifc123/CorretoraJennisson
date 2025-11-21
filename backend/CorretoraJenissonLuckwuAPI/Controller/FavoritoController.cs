@@ -1,7 +1,10 @@
 ﻿using CorretoraJenissonLuckwuAPI.Models.Entities;
+using CorretoraJenissonLuckwuAPI.Models.DTOs;
 using CorretoraJenissonLuckwuAPI.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 
 namespace CorretoraJenissonLuckwuAPI.Controller
 {
@@ -95,12 +98,36 @@ namespace CorretoraJenissonLuckwuAPI.Controller
         }
 
         [HttpPost]
-        public async Task<ActionResult<Favorito>> Post(Favorito favorito)
+        public async Task<ActionResult<Favorito>> Post([FromBody] CreateFavoritoRequest request)
         {
             try
             {
+                if (request == null || request.ImovelId <= 0)
+                {
+                    return BadRequest("ImovelId inválido");
+                }
+
+                var userIdClaim = User.FindFirst(JwtRegisteredClaimNames.Sub) ?? User.FindFirst(ClaimTypes.NameIdentifier);
+                if (userIdClaim == null || !int.TryParse(userIdClaim.Value, out var usuarioId))
+                {
+                    return Unauthorized("Não foi possível identificar o usuário.");
+                }
+
+                var favorito = new Favorito
+                {
+                    Usuario_Id = usuarioId,
+                    Imovel_Id = request.ImovelId
+                };
+
                 var result = await _services.Add(favorito);
-                if (result == null) return BadRequest("Erro ao adicionar favorito. Pode ser que já esteja favoritado.");
+                if (result == null)
+                {
+                    var existente = await _services.GetByUsuarioAndImovel(usuarioId, request.ImovelId);
+                    if (existente != null)
+                        return Ok(existente);
+
+                    return BadRequest("Erro ao adicionar favorito.");
+                }
                 return Ok(result);
             }
             catch (Exception ex)

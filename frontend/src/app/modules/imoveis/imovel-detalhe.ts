@@ -122,7 +122,7 @@ export class ImovelDetalhe implements OnInit {
         }
       });
     } else {
-      this.favoritoService.add(user.userId, imovel.id).subscribe({
+      this.favoritoService.add(imovel.id).subscribe({
         next: () => {
           const ids = new Set(this.favoritosIds());
           ids.add(imovel.id);

@@ -61,7 +61,7 @@ namespace CorretoraJenissonLuckwuAPI.Repository
             // Verificar se já existe
             var existe = await GetByUsuarioAndImovelAsync(favorito.Usuario_Id, favorito.Imovel_Id);
             if (existe != null)
-                return null; // Já está favoritado
+                return existe; // Idempotente: retorna o favorito existente
 
             await _context.Favoritos.AddAsync(favorito);
             await _context.SaveChangesAsync();

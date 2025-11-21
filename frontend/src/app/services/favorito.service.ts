@@ -13,8 +13,7 @@ export interface Favorito {
 }
 
 export interface CreateFavoritoRequest {
-  usuario_Id: number;
-  imovel_Id: number;
+  imovelId: number;
 }
 
 @Injectable({
@@ -63,10 +62,9 @@ export class FavoritoService {
   /**
    * Adiciona um imóvel aos favoritos (requer autenticação)
    */
-  add(usuarioId: number, imovelId: number): Observable<Favorito> {
+  add(imovelId: number): Observable<Favorito> {
     const favorito: CreateFavoritoRequest = {
-      usuario_Id: usuarioId,
-      imovel_Id: imovelId
+      imovelId
     };
     return this.http.post<Favorito>(this.baseUrl, favorito);
   }

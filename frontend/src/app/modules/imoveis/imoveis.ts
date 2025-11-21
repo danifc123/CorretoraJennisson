@@ -319,7 +319,7 @@ export class Imoveis implements OnInit {
       });
     } else {
       // Adiciona favorito
-      this.favoritoService.add(user.userId, imovel.id).subscribe({
+      this.favoritoService.add(imovel.id).subscribe({
         next: () => {
           const ids = new Set(this.favoritosIds());
           ids.add(imovel.id);
@@ -327,11 +327,7 @@ export class Imoveis implements OnInit {
         },
         error: (error) => {
           console.error('Erro ao adicionar favorito:', error);
-          if (error.status === 400) {
-            alert('Este imóvel já está nos seus favoritos.');
-          } else {
-            alert('Erro ao adicionar aos favoritos. Tente novamente.');
-          }
+          alert('Erro ao adicionar aos favoritos. Tente novamente.');
         }
       });
     }
