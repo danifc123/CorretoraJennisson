@@ -81,11 +81,13 @@ namespace CorretoraJenissonLuckwuAPI.Repository
                 .ToListAsync();
         }
 
-        public async Task<List<Imovel>> GetByTipoAsync(TipoImovel tipo)
+        public async Task<List<Imovel>> GetByTipoAsync(string tipo)
         {
+            var normalizedTipo = tipo?.Trim().ToLower() ?? string.Empty;
+
             return await _context.Imoveis
                 .Include(i => i.Imagens)
-                .Where(i => i.TipoImovel == tipo)
+                .Where(i => i.TipoImovel != null && i.TipoImovel.ToLower() == normalizedTipo)
                 .OrderByDescending(i => i.Created_at)
                 .ToListAsync();
         }

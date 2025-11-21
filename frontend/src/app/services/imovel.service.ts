@@ -9,11 +9,9 @@ export enum StatusImovel {
   Alugado = 'Alugado'
 }
 
-export enum TipoImovel {
-  Casa = 'Casa',
-  Apartamento = 'Apartamento',
-  Terreno = 'Terreno'
-}
+export type TipoImovel = string;
+
+export const DEFAULT_TIPOS_IMOVEL: string[] = ['Casa', 'Apartamento', 'Terreno'];
 
 export interface Imovel {
   id: number;
@@ -24,7 +22,7 @@ export interface Imovel {
   endereco: string;
   preco: number;
   status: StatusImovel;
-  tipoImovel: TipoImovel;
+  tipoImovel: string;
   created_at?: string;
   updated_at?: string;
   imagens?: ImagemImovel[];
@@ -45,7 +43,7 @@ export interface CreateImovelRequest {
   endereco: string;
   preco: number;
   status: StatusImovel;
-  tipoImovel: TipoImovel;
+  tipoImovel: string;
 }
 
 export interface UpdateImovelRequest extends Partial<CreateImovelRequest> {
@@ -106,7 +104,7 @@ export class ImovelService {
   /**
    * Filtra imóveis por tipo
    */
-  getByTipo(tipo: TipoImovel): Observable<Imovel[]> {
+  getByTipo(tipo: string): Observable<Imovel[]> {
     const params = new HttpParams().set('tipo', tipo);
     return this.http.get<Imovel[]>(`${this.baseUrl}/filter/tipo`, { params });
   }
@@ -134,7 +132,7 @@ export class ImovelService {
    */
   search(filters: {
     cidade?: string;
-    tipo?: TipoImovel;
+    tipo?: string;
     status?: StatusImovel;
     precoMin?: number;
     precoMax?: number;

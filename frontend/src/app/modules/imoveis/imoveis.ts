@@ -1,8 +1,8 @@
 import { Component, signal, computed, OnInit, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
-import { ImovelService, Imovel, StatusImovel, TipoImovel } from '../../services/imovel.service';
+import { Router, RouterLink, ActivatedRoute, ParamMap } from '@angular/router';
+import { ImovelService, Imovel, StatusImovel, DEFAULT_TIPOS_IMOVEL } from '../../services/imovel.service';
 import { FavoritoService } from '../../services/favorito.service';
 import { AuthService } from '../../services/auth.service';
 
@@ -42,7 +42,7 @@ export class Imoveis implements OnInit {
   currentUser = signal<any>(null);
 
   // Opções de filtros (serão carregadas dinamicamente)
-  tipos = Object.values(TipoImovel);
+  tipos = signal<string[]>([...DEFAULT_TIPOS_IMOVEL]);
   statusOptions = Object.values(StatusImovel);
   cidades = signal<string[]>([]);
 
@@ -50,7 +50,8 @@ export class Imoveis implements OnInit {
     private imovelService: ImovelService,
     private favoritoService: FavoritoService,
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private route: ActivatedRoute
   ) {
     // Inicializa signals de autenticação
     this.isLoggedIn = this.authService.isAuthenticated;
@@ -67,6 +68,10 @@ export class Imoveis implements OnInit {
   }
 
   ngOnInit(): void {
+    this.route.queryParamMap.subscribe((params) => {
+      this.aplicarQueryParams(params);
+    });
+
     this.carregarImoveis();
     if (this.isLoggedIn()) {
       this.carregarFavoritos();
@@ -84,6 +89,7 @@ export class Imoveis implements OnInit {
       next: (imoveis) => {
         this.imoveis.set(imoveis);
         this.extrairCidades(imoveis);
+        this.extrairTipos(imoveis);
         this.loading.set(false);
       },
       error: (error) => {
@@ -105,6 +111,37 @@ export class Imoveis implements OnInit {
     });
 
     this.cidades.set(Array.from(cidadesSet).sort());
+  }
+
+  private titleCase(value: string): string {
+    if (!value) return '';
+    return value
+      .toLowerCase()
+      .split(' ')
+      .filter(Boolean)
+      .map(part => part.charAt(0).toUpperCase() + part.slice(1))
+      .join(' ');
+  }
+
+  /**
+   * Extrai lista única de tipos dos imóveis
+   */
+  private extrairTipos(imoveis: Imovel[]): void {
+    const tiposSet = new Set<string>();
+
+    imoveis.forEach(imovel => {
+      const tipo = (imovel.tipoImovel || '').trim();
+      if (tipo) {
+        tiposSet.add(this.titleCase(tipo));
+      }
+    });
+
+    if (tiposSet.size === 0) {
+      this.tipos.set([...DEFAULT_TIPOS_IMOVEL]);
+      return;
+    }
+
+    this.tipos.set(Array.from(tiposSet).sort());
   }
 
   /**
@@ -151,9 +188,10 @@ export class Imoveis implements OnInit {
     }
 
     // Filtro por tipo
-    if (this.tipoSelecionado()) {
+    const tipoSelecionado = this.tipoSelecionado().toLowerCase();
+    if (tipoSelecionado) {
       resultado = resultado.filter(imovel =>
-        imovel.tipoImovel === this.tipoSelecionado()
+        (imovel.tipoImovel || '').toLowerCase() === tipoSelecionado
       );
     }
 
@@ -347,5 +385,42 @@ export class Imoveis implements OnInit {
    */
   onFiltroChange(): void {
     this.paginaAtual.set(1);
+  }
+
+  /**
+   * Aplica filtros recebidos via query params
+   */
+  private aplicarQueryParams(params: ParamMap): void {
+    const search = params.get('search');
+    this.searchTerm.set(search ?? '');
+
+    const tipo = params.get('tipo');
+    this.tipoSelecionado.set(tipo ? this.titleCase(tipo) : '');
+
+    const status = params.get('status');
+    this.statusSelecionado.set(this.isStatusImovel(status) ? status : '');
+
+    const cidade = params.get('cidade');
+    this.cidadeSelecionada.set(cidade ?? '');
+
+    const precoMin = this.toNumber(params.get('precoMin'));
+    const precoMax = this.toNumber(params.get('precoMax'));
+    this.precoMin.set(precoMin ?? null);
+    this.precoMax.set(precoMax ?? null);
+
+    if (params.keys.length > 0) {
+      this.paginaAtual.set(1);
+    }
+  }
+
+  private toNumber(value: string | null): number | undefined {
+    if (!value) return undefined;
+    const parsed = Number(value);
+    return isNaN(parsed) ? undefined : parsed;
+  }
+
+  private isStatusImovel(value: string | null): value is StatusImovel {
+    if (!value) return false;
+    return Object.values(StatusImovel).includes(value as StatusImovel);
   }
 }

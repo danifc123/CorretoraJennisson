@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { forkJoin } from 'rxjs';
-import { ImovelService, Imovel, StatusImovel, TipoImovel, CreateImovelRequest } from '../../../services/imovel.service';
+import { ImovelService, Imovel, StatusImovel, CreateImovelRequest, DEFAULT_TIPOS_IMOVEL } from '../../../services/imovel.service';
 import { ImagemImovelService } from '../../../services/imagem-imovel.service';
 import { AuthService } from '../../../services/auth.service';
 
@@ -28,7 +28,7 @@ export class ImoveisAdmin implements OnInit {
   // Formulário
   formData: Partial<CreateImovelRequest> = {
     titulo: '',
-    tipoImovel: TipoImovel.Casa,
+    tipoImovel: 'Casa',
     estado: 'PB',
     cidade: 'João Pessoa',
     endereco: '',
@@ -43,14 +43,14 @@ export class ImoveisAdmin implements OnInit {
 
   // Filtros e busca
   searchTerm = signal('');
-  tipoFiltro = signal<TipoImovel | ''>('');
+  tipoFiltro = signal<string>('');
   statusFiltro = signal<StatusImovel | ''>('');
 
   // Dados carregados da API
   imoveis = signal<Imovel[]>([]);
 
   // Opções
-  tipos = Object.values(TipoImovel);
+  tipos = signal<string[]>([...DEFAULT_TIPOS_IMOVEL]);
   statusOptions = Object.values(StatusImovel);
   estados = ['PB', 'PE', 'RN', 'CE', 'AL', 'SE', 'BA'];
   cidades = signal<string[]>([]);
@@ -86,6 +86,7 @@ export class ImoveisAdmin implements OnInit {
       next: (imoveis) => {
         this.imoveis.set(imoveis);
         this.extrairCidades(imoveis);
+        this.atualizarTipos(imoveis);
         this.loading.set(false);
       },
       error: (error) => {
@@ -107,6 +108,39 @@ export class ImoveisAdmin implements OnInit {
     this.cidades.set(Array.from(cidadesSet).sort());
   }
 
+  private atualizarTipos(imoveis: Imovel[]): void {
+    const tiposSet = new Set<string>();
+
+    imoveis.forEach(imovel => {
+      const tipo = (imovel.tipoImovel || '').trim();
+      if (tipo) {
+        tiposSet.add(this.titleCase(tipo));
+      }
+    });
+
+    if (tiposSet.size === 0) {
+      this.tipos.set([...DEFAULT_TIPOS_IMOVEL]);
+      return;
+    }
+
+    this.tipos.set(Array.from(tiposSet).sort());
+  }
+
+  private titleCase(value: string): string {
+    if (!value) return '';
+    return value
+      .toLowerCase()
+      .split(' ')
+      .filter(Boolean)
+      .map(part => part.charAt(0).toUpperCase() + part.slice(1))
+      .join(' ');
+  }
+
+  private tipDefault(): string {
+    const tipos = this.tipos();
+    return tipos.length > 0 ? tipos[0] : 'Casa';
+  }
+
   /**
    * Imóveis filtrados
    */
@@ -122,8 +156,11 @@ export class ImoveisAdmin implements OnInit {
       );
     }
 
-    if (this.tipoFiltro()) {
-      resultado = resultado.filter(imovel => imovel.tipoImovel === this.tipoFiltro());
+    const filtroTipo = this.tipoFiltro().toLowerCase();
+    if (filtroTipo) {
+      resultado = resultado.filter(imovel =>
+        (imovel.tipoImovel || '').toLowerCase() === filtroTipo
+      );
     }
 
     if (this.statusFiltro()) {
@@ -162,7 +199,7 @@ export class ImoveisAdmin implements OnInit {
     this.editingImovel.set(null);
     this.formData = {
       titulo: '',
-      tipoImovel: TipoImovel.Casa,
+      tipoImovel: this.tipDefault(),
       estado: 'PB',
       cidade: 'João Pessoa',
       endereco: '',
@@ -228,8 +265,11 @@ export class ImoveisAdmin implements OnInit {
    * Salva imóvel (criar ou editar)
    */
   salvarImovel(): void {
+    const tipoNormalizado = this.titleCase((this.formData.tipoImovel || '').trim());
+    this.formData.tipoImovel = tipoNormalizado;
+
     // Validações
-    if (!this.formData.titulo || !this.formData.tipoImovel || !this.formData.cidade ||
+    if (!this.formData.titulo || !tipoNormalizado || !this.formData.cidade ||
         !this.formData.endereco || !this.formData.preco || !this.formData.descricao ||
         !this.formData.estado || !this.formData.status) {
       this.errorMessage.set('Por favor, preencha todos os campos obrigatórios.');
@@ -246,7 +286,7 @@ export class ImoveisAdmin implements OnInit {
 
     const imovelData: CreateImovelRequest = {
       titulo: this.formData.titulo!,
-      tipoImovel: this.formData.tipoImovel!,
+      tipoImovel: tipoNormalizado,
       estado: this.formData.estado!,
       cidade: this.formData.cidade!,
       endereco: this.formData.endereco!,

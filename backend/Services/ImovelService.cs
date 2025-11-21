@@ -42,7 +42,7 @@ namespace CorretoraJenissonLuckwuAPI.Services
             return await _repository.GetByCidadeAsync(cidade);
         }
 
-        public async Task<List<Imovel>> GetByTipo(TipoImovel tipo)
+        public async Task<List<Imovel>> GetByTipo(string tipo)
         {
             return await _repository.GetByTipoAsync(tipo);
         }

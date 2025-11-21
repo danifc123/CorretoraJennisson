@@ -10,13 +10,6 @@ namespace CorretoraJenissonLuckwuAPI.Models.Entities
     Alugado
 }
 
-public enum TipoImovel
-{
-    Casa,
-    Apartamento,
-    Terreno
-}
-
     public class Imovel
     {
         #region Key
@@ -43,7 +36,8 @@ public enum TipoImovel
         [Required]
         public StatusImovel Status { get; set; }// Disponível, Vendido, Alugado
 
-        public TipoImovel TipoImovel { get; set; }// Casa, Apartamento, Terreno
+        [Required]
+        public string TipoImovel { get; set; } = string.Empty;// Casa, Apartamento, Terreno ou definido pelo admin
         [Required]
         public string Titulo { get; set; }
 

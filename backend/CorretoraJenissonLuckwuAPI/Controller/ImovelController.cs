@@ -113,10 +113,15 @@ namespace CorretoraJenissonLuckwuAPI.Controller
         }
 
         [HttpGet("filter/tipo")]
-        public async Task<ActionResult<List<Imovel>>> GetByTipo([FromQuery] TipoImovel tipo)
+        public async Task<ActionResult<List<Imovel>>> GetByTipo([FromQuery] string tipo)
         {
             try
             {
+                if (string.IsNullOrWhiteSpace(tipo))
+                {
+                    return BadRequest("Tipo é obrigatório");
+                }
+
                 var result = await _services.GetByTipo(tipo);
                 return Ok(result);
             }
