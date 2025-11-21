@@ -297,7 +297,14 @@ export class ChatWindow implements OnInit, OnDestroy, AfterViewChecked, OnChange
 
   async sendMessage() {
     const conteudo = this.newMessage().trim();
-    if (!conteudo || !this.isConnected()) {
+    if (!conteudo) {
+      return;
+    }
+
+    // Se for admin, DEVE ter um usuarioId selecionado para enviar mensagem
+    if (this.isAdmin() && this.usuarioIdSignal() === undefined) {
+      console.error('Admin tentou enviar mensagem sem selecionar um cliente');
+      alert('Por favor, selecione um cliente para enviar a mensagem.');
       return;
     }
 
@@ -307,20 +314,56 @@ export class ChatWindow implements OnInit, OnDestroy, AfterViewChecked, OnChange
       : undefined;
 
     try {
-      await this.signalRService.sendMessage(conteudo, usuarioIdDestino);
-      this.newMessage.set('');
-      this.shouldScroll = true;
-      // Recarrega mensagens para atualizar a lista
-      await this.loadMessages();
+      // Tenta enviar via SignalR se estiver conectado
+      if (this.isConnected()) {
+        await this.signalRService.sendMessage(conteudo, usuarioIdDestino);
+        this.newMessage.set('');
+        this.shouldScroll = true;
+        await this.loadMessages();
+      } else {
+        // Se não estiver conectado, tenta conectar primeiro
+        try {
+          await this.signalRService.startConnection();
+          await new Promise(resolve => setTimeout(resolve, 100));
+          this.isConnected.set(this.signalRService.isConnected());
+
+          if (this.isConnected()) {
+            await this.signalRService.sendMessage(conteudo, usuarioIdDestino);
+            this.newMessage.set('');
+            this.shouldScroll = true;
+            await this.loadMessages();
+          } else {
+            // Fallback para REST se SignalR não funcionar
+            await firstValueFrom(this.chatService.create({
+              conteudo,
+              usuarioIdDestino
+            }));
+            this.newMessage.set('');
+            await this.loadMessages();
+          }
+        } catch (signalRError) {
+          // Se SignalR falhar, usa REST com usuarioIdDestino
+          await firstValueFrom(this.chatService.create({
+            conteudo,
+            usuarioIdDestino
+          }));
+          this.newMessage.set('');
+          await this.loadMessages();
+        }
+      }
     } catch (error) {
       console.error('Erro ao enviar mensagem:', error);
-      // Tenta enviar via REST como fallback
+      // Tenta enviar via REST como último recurso
       try {
-        await firstValueFrom(this.chatService.create({ conteudo }));
+        await firstValueFrom(this.chatService.create({
+          conteudo,
+          usuarioIdDestino
+        }));
         this.newMessage.set('');
         await this.loadMessages();
       } catch (restError) {
         console.error('Erro ao enviar mensagem via REST:', restError);
+        alert('Erro ao enviar mensagem. Tente novamente.');
       }
     }
   }

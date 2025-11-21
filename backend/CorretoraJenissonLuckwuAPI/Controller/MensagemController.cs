@@ -132,9 +132,39 @@ namespace CorretoraJenissonLuckwuAPI.Controller
 
                 var role = User.FindFirst(ClaimTypes.Role)?.Value;
 
+                // Validação: apenas admins podem especificar UsuarioIdDestino
+                if (request.UsuarioIdDestino.HasValue && role != "Admin")
+                {
+                    return BadRequest("Apenas administradores podem especificar o destinatário da mensagem.");
+                }
+
+                // Validação: Admin DEVE especificar UsuarioIdDestino (não pode enviar mensagem para si mesmo)
+                if (role == "Admin" && !request.UsuarioIdDestino.HasValue)
+                {
+                    Console.WriteLine($"MensagemController.Post: ERRO - Admin {userId} tentou enviar mensagem sem UsuarioIdDestino");
+                    return BadRequest("Administrador deve especificar o ID do cliente destinatário (UsuarioIdDestino).");
+                }
+
+                // Validação: Admin não pode enviar mensagem para si mesmo
+                if (role == "Admin" && request.UsuarioIdDestino.HasValue && request.UsuarioIdDestino.Value == userId)
+                {
+                    Console.WriteLine($"MensagemController.Post: ERRO - Admin {userId} tentou enviar mensagem para si mesmo");
+                    return BadRequest("Administrador não pode enviar mensagem para si mesmo.");
+                }
+
+                // Determina o Usuario_Id correto:
+                // - Se for admin, SEMPRE usa o UsuarioIdDestino (obrigatório)
+                // - Se for usuário, sempre usa o próprio userId
+                int usuarioIdFinal = role == "Admin" && request.UsuarioIdDestino.HasValue
+                    ? request.UsuarioIdDestino.Value
+                    : userId;
+
+                // Log para debug e auditoria
+                Console.WriteLine($"[MensagemController.Post] Admin={role == "Admin"}, AdminId={userId}, UsuarioIdDestino={request.UsuarioIdDestino}, UsuarioIdFinal={usuarioIdFinal}, ConteudoLength={request.Conteudo.Length}");
+
                 var mensagem = new Mensagem
                 {
-                    Usuario_Id = userId,
+                    Usuario_Id = usuarioIdFinal,
                     Conteudo = request.Conteudo,
                     Remetente_Tipo = role == "Admin" ? RemetenteTipo.Administrador : RemetenteTipo.Usuario,
                     Lida = false

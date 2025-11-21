@@ -1,9 +1,11 @@
 @if (shouldShow()) {
+
 <button class="chat-button"
-        (click)="toggleChat()"
+        (click)="openChat()"
         [class.has-unread]="unreadCount() > 0"
-        title="Abrir chat de suporte"
-        aria-label="Abrir chat">
+        [class.has-messages]="hasMessages()"
+        [title]="hasMessages() ? 'Abrir chat de suporte' : 'Enviar mensagem de contato'"
+        [attr.aria-label]="hasMessages() ? 'Abrir chat' : 'Ir para página de contato'">
   <span class="material-icons">chat</span>
   @if (unreadCount() > 0) {
   <span class="badge">{{ unreadCount() }}</span>
@@ -11,3 +13,4 @@
 </button>
 }
 
+<app-chat-modal></app-chat-modal>

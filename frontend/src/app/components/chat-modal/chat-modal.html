@@ -1,0 +1,71 @@
+@if (isOpen()) {
+<div class="chat-modal-overlay"
+     (click)="close()">
+  <div class="chat-modal-container"
+       (click)="$event.stopPropagation()">
+    <!-- Header -->
+    <div class="chat-modal-header">
+      <div class="chat-modal-header-content">
+        <span class="material-icons">support_agent</span>
+        <h3>Suporte</h3>
+      </div>
+      <button class="chat-modal-close"
+              (click)="close()"
+              title="Fechar chat">
+        <span class="material-icons">close</span>
+      </button>
+    </div>
+
+    <!-- Messages Container -->
+    <div class="chat-modal-messages"
+         #messagesContainer>
+      @if (loading()) {
+      <div class="loading-state">
+        <span class="material-icons">hourglass_top</span>
+        <p>Carregando mensagens...</p>
+      </div>
+      } @else if (messages().length === 0) {
+      <div class="empty-state">
+        <span class="material-icons">chat_bubble_outline</span>
+        <p>Nenhuma mensagem ainda.</p>
+        <small>Digite uma mensagem abaixo para começar a conversa com o Corretor!</small>
+      </div>
+      } @else {
+      @for (mensagem of messages(); track mensagem.id) {
+      <div class="message"
+           [class.message-usuario]="isUsuarioMessage(mensagem)"
+           [class.message-admin]="!isUsuarioMessage(mensagem)">
+        <div class="message-content">
+          <div class="message-header">
+            <span class="message-sender">{{ getSenderName(mensagem) }}</span>
+            <span class="message-time">{{ formatDate(mensagem.created_At) }}</span>
+          </div>
+          <div class="message-text">{{ getCleanMessageText(mensagem.conteudo) }}</div>
+        </div>
+      </div>
+      }
+      }
+    </div>
+
+    <!-- Input Area -->
+    <div class="chat-modal-input">
+      <label for="chat-modal-message-input"
+             class="sr-only">Digite sua mensagem</label>
+      <input type="text"
+             id="chat-modal-message-input"
+             [(ngModel)]="newMessage"
+             (keydown.enter)="sendMessage()"
+             placeholder="Digite sua mensagem..."
+             [disabled]="loading()"
+             aria-label="Campo de mensagem do chat"
+             maxlength="2000" />
+      <button class="btn-send"
+              (click)="sendMessage()"
+              [disabled]="loading() || !newMessage().trim()"
+              title="Enviar mensagem">
+        <span class="material-icons">send</span>
+      </button>
+    </div>
+  </div>
+</div>
+}

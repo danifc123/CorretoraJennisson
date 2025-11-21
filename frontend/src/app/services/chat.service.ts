@@ -22,6 +22,7 @@ export interface Mensagem {
 
 export interface CreateMensagemRequest {
   conteudo: string;
+  usuarioIdDestino?: number; // ID do usuário destinatário (apenas para administradores)
 }
 
 export interface Conversa {

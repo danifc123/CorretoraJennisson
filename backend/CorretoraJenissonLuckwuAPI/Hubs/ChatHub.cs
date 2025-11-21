@@ -74,11 +74,30 @@ namespace CorretoraJenissonLuckwuAPI.Hubs
           return;
         }
 
-        // Se for admin e tiver usuarioIdDestino, usa esse ID, senão usa o userId do admin
+        // Validação: Admin DEVE especificar usuarioIdDestino
+        if (role == "Admin" && !usuarioIdDestino.HasValue)
+        {
+          await Clients.Caller.SendAsync("Error", "Administrador deve especificar o ID do cliente destinatário.");
+          Console.WriteLine($"[ChatHub.SendMessage] ERRO - Admin {userId} tentou enviar mensagem sem especificar usuarioIdDestino");
+          return;
+        }
+
+        // Validação: Admin não pode enviar mensagem para si mesmo
+        if (role == "Admin" && usuarioIdDestino.HasValue && usuarioIdDestino.Value == userId)
+        {
+          await Clients.Caller.SendAsync("Error", "Administrador não pode enviar mensagem para si mesmo.");
+          Console.WriteLine($"[ChatHub.SendMessage] ERRO - Admin {userId} tentou enviar mensagem para si mesmo (usuarioIdDestino={usuarioIdDestino.Value})");
+          return;
+        }
+
+        // Se for admin, SEMPRE usa o usuarioIdDestino (obrigatório)
         // Se for usuário, sempre usa o próprio userId
         int usuarioIdFinal = role == "Admin" && usuarioIdDestino.HasValue 
           ? usuarioIdDestino.Value 
           : userId;
+
+        // Log para debug e auditoria
+        Console.WriteLine($"[ChatHub.SendMessage] Admin={role == "Admin"}, AdminId={userId}, UsuarioIdDestino={usuarioIdDestino}, UsuarioIdFinal={usuarioIdFinal}, ConteudoLength={conteudo.Length}, ConnectionId={Context.ConnectionId}");
 
         var mensagem = new Mensagem
         {

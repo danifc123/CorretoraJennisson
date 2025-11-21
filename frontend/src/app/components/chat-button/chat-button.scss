@@ -7,21 +7,24 @@
   width: 60px;
   height: 60px;
   border-radius: 50%;
-  background: $secondary-color;
+  background: rgba($secondary-color, 0.85);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
   color: white;
-  border: none;
+  border: 2px solid rgba(255, 255, 255, 0.3);
   box-shadow: $shadow-lg;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 1000;
+  z-index: $z-index-fixed;
   transition: $transition;
   position: relative;
 
   &:hover {
-    background: $active-color;
-    transform: scale(1.05);
+    background: rgba($secondary-color, 1);
+    border-color: rgba(255, 255, 255, 0.5);
+    transform: scale(1.1);
     box-shadow: $shadow-xl;
   }
 
@@ -53,6 +56,11 @@
 
   &.has-unread {
     animation: bounce 1s infinite;
+  }
+
+  &.has-messages {
+    // Botão com mensagens fica mais opaco
+    background: rgba($secondary-color, 0.9);
   }
 }
 
