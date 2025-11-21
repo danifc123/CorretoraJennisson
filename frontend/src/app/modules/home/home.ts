@@ -1,12 +1,13 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
-import { ImovelService, Imovel, StatusImovel } from '../../services/imovel.service';
+import { FormsModule } from '@angular/forms';
+import { Router, RouterLink } from '@angular/router';
+import { ImovelService, Imovel, StatusImovel, DEFAULT_TIPOS_IMOVEL } from '../../services/imovel.service';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, FormsModule, RouterLink],
   templateUrl: './home.html',
   styleUrls: ['./home.scss']
 })
@@ -15,6 +16,11 @@ export class Home implements OnInit, OnDestroy {
   featuredImoveis: Imovel[] = [];
   loadingFeatured = false;
   featuredError = '';
+  searchLocation = '';
+  searchTipo = '';
+  searchPriceRange = '';
+  availableTipos: string[] = [...DEFAULT_TIPOS_IMOVEL];
+
   // Serviços/Categorias disponíveis
   services = [
     {
@@ -36,9 +42,9 @@ export class Home implements OnInit, OnDestroy {
       count: 156
     },
     {
-      icon: 'star',
-      title: 'Destaques',
-      description: 'Imóveis em destaque',
+      icon: 'favorite',
+      title: 'Favoritos',
+      description: 'Seus imóveis favoritos',
       count: 45
     },
     {
@@ -59,7 +65,10 @@ export class Home implements OnInit, OnDestroy {
   currentIndex = 0;
   itemsPerView = 3;
 
-  constructor(private imovelService: ImovelService) {}
+  constructor(
+    private imovelService: ImovelService,
+    private router: Router
+  ) {}
 
   ngOnInit() {
     this.updateItemsPerView();
@@ -124,8 +133,36 @@ export class Home implements OnInit, OnDestroy {
    * Navega para a página de imóveis com filtro
    */
   filterByCategory(category: string): void {
-    console.log(`Filtrar por categoria: ${category}`);
-    // TODO: Implementar navegação com filtro
+    const normalized = category.toLowerCase();
+
+    // Favoritos leva para a página de favoritos (rota protegida)
+    if (normalized === 'favoritos') {
+      this.router.navigate(['/favoritos']);
+      return;
+    }
+
+    const queryParams: Record<string, any> = {};
+
+    switch (normalized) {
+      case 'casas':
+        queryParams['tipo'] = 'Casa';
+        break;
+      case 'apartamentos':
+        queryParams['tipo'] = 'Apartamento';
+        break;
+      case 'terreno':
+      case 'terrenos':
+        queryParams['tipo'] = 'Terreno';
+        break;
+      case 'comprar':
+        queryParams['status'] = StatusImovel.Disponivel;
+        break;
+      default:
+        queryParams['search'] = category;
+        break;
+    }
+
+    this.navigateToImoveis(queryParams);
   }
 
   /**
@@ -133,8 +170,53 @@ export class Home implements OnInit, OnDestroy {
    */
   searchProperties(event: Event): void {
     event.preventDefault();
-    console.log('Buscar imóveis...');
-    // TODO: Implementar busca
+    const queryParams: Record<string, any> = {};
+
+    const location = this.searchLocation.trim();
+    if (location) {
+      queryParams['search'] = location;
+    }
+
+    if (this.searchTipo) {
+      queryParams['tipo'] = this.searchTipo;
+    }
+
+    const { precoMin, precoMax } = this.parsePriceRange(this.searchPriceRange);
+    if (precoMin !== undefined) {
+      queryParams['precoMin'] = precoMin;
+    }
+    if (precoMax !== undefined) {
+      queryParams['precoMax'] = precoMax;
+    }
+
+    this.navigateToImoveis(queryParams);
+  }
+
+  /**
+   * Sanitiza o campo de faixa de preço permitindo apenas números e um hífen
+   */
+  onPriceRangeInput(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    let value = input.value.replace(/[^0-9-]/g, '');
+
+    // Garante apenas um hífen
+    const firstHyphen = value.indexOf('-');
+    if (firstHyphen !== -1) {
+      const beforeHyphen = value.slice(0, firstHyphen + 1);
+      const afterHyphen = value.slice(firstHyphen + 1).replace(/-/g, '');
+      value = beforeHyphen + afterHyphen;
+    }
+
+    const hasHyphen = value.includes('-');
+    let [minPart, maxPart = ''] = value.split('-');
+    minPart = this.limitDigits(minPart);
+    maxPart = this.limitDigits(maxPart);
+
+    const limitedValue = hasHyphen ? `${minPart}-${maxPart}` : minPart;
+
+    const formatted = this.formatPriceRange(limitedValue);
+    this.searchPriceRange = formatted;
+    input.value = formatted;
   }
 
   /**
@@ -236,6 +318,7 @@ export class Home implements OnInit, OnDestroy {
           });
 
         this.featuredImoveis = disponiveis.slice(0, 3);
+        this.atualizarTipos(imoveis);
         this.loadingFeatured = false;
       },
       error: (error) => {
@@ -260,6 +343,114 @@ export class Home implements OnInit, OnDestroy {
       return imovel.imagens[0].url;
     }
     return '/images/placeholder-imovel.jpg';
+  }
+
+  /**
+   * Realiza navegação para a página de imóveis com filtros aplicados
+   */
+  private navigateToImoveis(queryParams: Record<string, any>): void {
+    this.router.navigate(['/imoveis'], {
+      queryParams
+    });
+  }
+
+  /**
+   * Converte texto de faixa de preço em valores numéricos
+   */
+  private parsePriceRange(input: string): { precoMin?: number; precoMax?: number } {
+    if (!input) return {};
+
+    const sanitized = input
+      .replace(/\s/g, '')
+      .replace(/\./g, '')
+      .replace(/[^0-9-]/g, '');
+    const parseValue = (value: string) => {
+      const numeric = parseInt(value.replace(/\D/g, ''), 10);
+      return isNaN(numeric) ? undefined : numeric;
+    };
+
+    if (sanitized.includes('-')) {
+      const [minValue, maxValue] = sanitized.split('-');
+      const precoMin = parseValue(minValue);
+      const precoMax = parseValue(maxValue);
+      return { precoMin, precoMax };
+    }
+
+    const precoMax = parseValue(sanitized);
+    return { precoMax };
+  }
+
+  /**
+   * Formata o texto da faixa de preço para exibição com separador de milhar
+   */
+  private formatPriceRange(value: string): string {
+    if (!value) return '';
+
+    const hasHyphen = value.includes('-');
+    const [minRaw, maxRaw = ''] = value.split('-');
+
+    const minFormatted = this.formatPriceValue(minRaw);
+    const maxFormatted = this.formatPriceValue(maxRaw);
+
+    if (hasHyphen) {
+      const separator = ' - ';
+
+      if (!minFormatted && !maxFormatted) {
+        return separator;
+      }
+
+      if (!maxFormatted) {
+        return `${minFormatted}${separator}`.trimEnd();
+      }
+
+      if (!minFormatted) {
+        return `${separator}${maxFormatted}`.trimStart();
+      }
+
+      return `${minFormatted}${separator}${maxFormatted}`;
+    }
+
+    return minFormatted;
+  }
+
+  private formatPriceValue(value: string): string {
+    if (!value) return '';
+    const numeric = parseInt(value, 10);
+    if (isNaN(numeric)) return '';
+    return new Intl.NumberFormat('pt-BR').format(numeric);
+  }
+
+  private limitDigits(value: string): string {
+    if (!value) return '';
+    return value.replace(/\D/g, '').slice(0, 10);
+  }
+
+  private atualizarTipos(imoveis: Imovel[]): void {
+    const tiposSet = new Set<string>();
+
+    imoveis.forEach(imovel => {
+      const tipo = (imovel.tipoImovel || '').trim();
+      if (tipo) {
+        tiposSet.add(this.titleCase(tipo));
+      }
+    });
+
+    if (tiposSet.size === 0) {
+      this.availableTipos = [...DEFAULT_TIPOS_IMOVEL];
+      return;
+    }
+
+    this.availableTipos = Array.from(tiposSet).sort();
+  }
+
+  private titleCase(value: string): string {
+    if (!value) return '';
+    return value
+      .toLowerCase()
+      .split(' ')
+      .filter(Boolean)
+      .map(part => part.charAt(0).toUpperCase() + part.slice(1))
+      .join(' ');
   }
 }
 
