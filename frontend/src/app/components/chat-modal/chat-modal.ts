@@ -173,30 +173,37 @@ export class ChatModal implements OnInit, OnDestroy, AfterViewChecked {
   }
 
   isUsuarioMessage(mensagem: Mensagem): boolean {
-    return mensagem.remetente_Tipo === RemetenteTipo.Usuario;
+    // CORREÇÃO: Backend pode enviar como STRING ('Usuario' ou 'Administrador'), número ou enum
+    const remetenteTipo = mensagem.remetente_Tipo;
+    const tipoString = String(remetenteTipo).toLowerCase();
+    const tipoNumero = Number(remetenteTipo);
+
+    // Verifica se é mensagem do USUÁRIO/CLIENTE (deve ficar à DIREITA)
+    return tipoString === 'usuario' ||
+           tipoNumero === 1 ||
+           remetenteTipo === RemetenteTipo.Usuario;
   }
 
   /**
-   * Retorna o nome do remetente da mensagem de forma simplificada
-   * Agora usa o campo usuario_Nome que vem do backend
+   * Retorna o nome do remetente da mensagem
+   * Mensagens do cliente: mostra o nome do cliente (ou "Você")
+   * Mensagens do administrador: mostra o nome do administrador
    */
   getSenderName(mensagem: Mensagem): string {
-    if (mensagem.remetente_Tipo === RemetenteTipo.Usuario) {
-      // Mensagem do usuário: usa o nome do usuário que vem do backend
-      if (mensagem.usuario_Nome) {
-        return mensagem.usuario_Nome;
-      }
+    // CORREÇÃO: Backend pode enviar como STRING ('Usuario' ou 'Administrador'), número ou enum
+    const remetenteTipo = mensagem.remetente_Tipo;
+    const tipoString = String(remetenteTipo).toLowerCase();
+    const tipoNumero = Number(remetenteTipo);
+    const isUsuario = tipoString === 'usuario' ||
+                      tipoNumero === 1 ||
+                      remetenteTipo === RemetenteTipo.Usuario;
 
-      // Fallback: usa o email como nome se não tiver nome
-      if (mensagem.usuario_Email) {
-        const nomeDoEmail = mensagem.usuario_Email.split('@')[0];
-        return this.capitalizeFirst(nomeDoEmail);
-      }
-
-      return 'Usuário';
+    if (isUsuario) {
+      // Mensagem do CLIENTE/USUÁRIO: mostra "Você" (pois o cliente está vendo suas próprias mensagens)
+      return 'Você';
     } else {
-      // Mensagem do administrador: usa o nome do administrador
-      return mensagem.administrador_Nome || 'Você';
+      // Mensagem do ADMINISTRADOR: mostra o nome do administrador
+      return mensagem.administrador_Nome || 'Administrador';
     }
   }
 

@@ -133,45 +133,48 @@
   margin-bottom: $spacing-md;
   animation: fadeIn 0.3s ease-in;
 
-  // Mensagens do usuário (alinhadas à direita)
+  // Mensagens do CLIENTE/USUÁRIO (à DIREITA - verde estilo WhatsApp)
   &.message-usuario {
-    justify-content: flex-end;
+    justify-content: flex-end !important;
+    align-items: flex-end !important;
 
     .message-content {
-      align-items: flex-end;
+      align-items: flex-end !important;
+      max-width: 70%;
 
       .message-sender-name {
-        color: rgba(0, 0, 0, 0.7);
-        text-align: right;
+        color: rgba(0, 0, 0, 0.6) !important;
+        text-align: right !important;
       }
 
       .message-body {
-        background: $secondary-color;
-        color: white;
-        border-radius: $border-radius-lg $border-radius-lg 0 $border-radius-lg;
-        box-shadow: $shadow-sm;
+        background: rgba(5, 97, 98, 0.85) !important; // Verde transparente estilo WhatsApp (#056162)
+        color: white !important;
+        border-radius: $border-radius-lg 0 $border-radius-lg $border-radius-lg !important;
+        box-shadow: 0 1px 0.5px rgba(0, 0, 0, 0.13) !important;
       }
     }
   }
 
-  // Mensagens do administrador (alinhadas à esquerda)
+  // Mensagens do ADMINISTRADOR (à ESQUERDA - cinza claro estilo WhatsApp)
   &.message-admin {
-    justify-content: flex-start;
+    justify-content: flex-start !important;
+    align-items: flex-start !important;
 
     .message-content {
-      align-items: flex-start;
+      align-items: flex-start !important;
+      max-width: 70%;
 
       .message-sender-name {
-        color: rgba(0, 0, 0, 0.7);
-        text-align: left;
+        color: rgba(0, 0, 0, 0.6) !important;
+        text-align: left !important;
       }
 
       .message-body {
-        background: $bg-primary;
-        color: $text-color;
-        border-radius: $border-radius-lg $border-radius-lg $border-radius-lg 0;
-        box-shadow: $shadow-sm;
-        border: 1px solid $bg-light;
+        background: #e5ddd5 !important; // Cinza claro estilo WhatsApp
+        color: #111b21 !important; // Texto escuro estilo WhatsApp
+        border-radius: 0 $border-radius-lg $border-radius-lg $border-radius-lg !important;
+        box-shadow: 0 1px 0.5px rgba(0, 0, 0, 0.13) !important;
       }
     }
   }
