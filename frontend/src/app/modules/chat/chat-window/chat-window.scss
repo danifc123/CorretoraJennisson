@@ -145,8 +145,13 @@
   padding: $spacing-md;
   display: flex;
   flex-direction: column;
-  gap: $spacing-sm;
-  background: $bg-secondary;
+  gap: $spacing-xs;
+  background: #efeae2; // Background estilo WhatsApp (bege claro)
+  background-image:
+    linear-gradient(180deg, rgba(239, 234, 226, 0.4) 0%, rgba(239, 234, 226, 0.4) 100%),
+    url("data:image/svg+xml,%3Csvg width='100' height='100' xmlns='http://www.w3.org/2000/svg'%3E%3Cdefs%3E%3Cpattern id='a' patternUnits='userSpaceOnUse' width='100' height='100' patternTransform='scale(0.5) rotate(0)'%3E%3Crect x='0' y='0' width='100' height='100' fill='hsla(0,0%25,100%25,1)'/%3E%3Cpath d='M11 18a7 7 0 1 1 0-14 7 7 0 0 1 0 14zm48 0a7 7 0 1 1 0-14 7 7 0 0 1 0 14zm-24-8a7 7 0 1 1 0-14 7 7 0 0 1 0 14z' stroke-width='1' stroke='hsla(259,0%25,56%25,1)' fill='none'/%3E%3C/pattern%3E%3C/defs%3E%3Crect fill='url(%23a)' height='100' width='100'/%3E%3C/svg%3E");
+  background-size: 100% 100%, 100px 100px;
+  background-attachment: fixed;
 
   .loading-state,
   .empty-state {
@@ -168,48 +173,98 @@
 
 .message {
   display: flex;
-  margin-bottom: $spacing-md;
+  margin-bottom: $spacing-sm;
   animation: fadeIn 0.3s ease-in;
+  width: 100%;
 
-  // Mensagens do usuário (alinhadas à esquerda - estilo WhatsApp)
+  // Mensagens do USUÁRIO (à ESQUERDA - cinza claro estilo WhatsApp)
   &.message-usuario {
-    justify-content: flex-start;
+    justify-content: flex-start !important;
+    align-items: flex-start !important;
+    width: 100% !important;
 
     .message-content {
-      align-items: flex-start;
+      align-items: flex-start !important;
+      max-width: 65% !important;
+      min-width: 0;
 
       .message-sender-name {
-        color: rgba(0, 0, 0, 0.7);
-        text-align: left;
+        color: rgba(0, 0, 0, 0.6) !important;
+        text-align: left !important;
+        font-size: $font-size-xs !important;
+        font-weight: $font-weight-semibold !important;
+        margin-bottom: 4px !important;
+        padding-left: 8px !important;
+        display: block !important;
+        visibility: visible !important;
+        opacity: 1 !important;
       }
 
       .message-body {
-        background: $bg-primary;
-        color: $text-color;
-        border-radius: 0 $border-radius-lg $border-radius-lg $border-radius-lg;
-        box-shadow: $shadow-sm;
-        border: 1px solid $bg-light;
+        background: #e5ddd5 !important; // Cinza claro estilo WhatsApp
+        color: #111b21 !important; // Texto escuro estilo WhatsApp
+        border-radius: 7.5px 7.5px 7.5px 0 !important;
+        box-shadow: 0 1px 0.5px rgba(0, 0, 0, 0.13) !important;
+        position: relative;
+
+        // Pequena seta na ponta esquerda (estilo WhatsApp)
+        &::before {
+          content: '';
+          position: absolute;
+          left: -8px;
+          bottom: 0;
+          width: 0;
+          height: 0;
+          border-right: 8px solid #e5ddd5;
+          border-top: 8px solid transparent;
+          border-bottom: 8px solid transparent;
+        }
       }
     }
   }
 
-  // Mensagens do administrador (alinhadas à direita com background verde - estilo WhatsApp)
+  // Mensagens do ADMINISTRADOR (à DIREITA - verde estilo WhatsApp)
   &.message-admin {
-    justify-content: flex-end;
+    justify-content: flex-end !important;
+    align-items: flex-end !important;
+    width: 100% !important;
 
     .message-content {
-      align-items: flex-end;
+      align-items: flex-end !important;
+      max-width: 65% !important;
+      min-width: 0;
 
       .message-sender-name {
-        color: rgba(0, 0, 0, 0.7);
-        text-align: right;
+        color: rgba(0, 0, 0, 0.6) !important;
+        text-align: right !important;
+        font-size: $font-size-xs !important;
+        font-weight: $font-weight-semibold !important;
+        margin-bottom: 4px !important;
+        padding-right: 8px !important;
+        display: block !important;
+        visibility: visible !important;
+        opacity: 1 !important;
       }
 
       .message-body {
-        background: rgba(5, 97, 98, 0.9); // Verde transparente estilo WhatsApp (#056162)
-        color: white;
-        border-radius: $border-radius-lg 0 $border-radius-lg $border-radius-lg;
-        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+        background: rgba(5, 97, 98, 0.85) !important; // Verde escuro transparente estilo WhatsApp (#056162)
+        color: white !important; // Texto branco para contraste
+        border-radius: 7.5px 0 7.5px 7.5px !important;
+        box-shadow: 0 1px 0.5px rgba(0, 0, 0, 0.13) !important;
+        position: relative;
+
+        // Pequena seta na ponta direita (estilo WhatsApp)
+        &::before {
+          content: '';
+          position: absolute;
+          right: -8px;
+          bottom: 0;
+          width: 0;
+          height: 0;
+          border-left: 8px solid rgba(5, 97, 98, 0.85);
+          border-top: 8px solid transparent;
+          border-bottom: 8px solid transparent;
+        }
       }
     }
   }
@@ -221,29 +276,35 @@
     }
   }
 
-  // Container da mensagem
-  .message-content {
-    max-width: 70%;
-    word-wrap: break-word;
-    display: flex;
-    flex-direction: column;
-    gap: $spacing-xs;
+    // Container da mensagem
+    .message-content {
+      word-wrap: break-word;
+      word-break: break-word;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
 
     // Nome do remetente acima da mensagem (estilo WhatsApp)
     .message-sender-name {
       font-size: $font-size-xs;
       font-weight: $font-weight-semibold;
       padding: 0 $spacing-xs;
-      margin-bottom: 2px;
+      margin-bottom: 4px;
+      display: block !important; // Garante que está visível
+      visibility: visible !important;
+      opacity: 1 !important;
+      color: rgba(0, 0, 0, 0.6) !important;
     }
 
     // Corpo da mensagem com texto e horário
     .message-body {
       display: flex;
       flex-direction: column;
-      gap: $spacing-xs;
-      padding: $spacing-sm $spacing-md;
+      gap: 4px;
+      padding: 6px 7px 8px 9px;
       position: relative;
+      word-wrap: break-word;
+      word-break: break-word;
 
       .message-text {
         line-height: 1.5;
@@ -255,14 +316,16 @@
         display: flex;
         align-items: center;
         justify-content: flex-end;
-        gap: $spacing-xs;
-        margin-top: auto;
-        padding-top: $spacing-xs;
+        gap: 4px;
+        margin-top: 2px;
+        margin-left: auto;
 
         .message-time {
-          font-size: $font-size-xs;
-          opacity: 0.7;
+          font-size: 11px;
+          opacity: 0.6;
           color: inherit;
+          white-space: nowrap;
+          margin-left: 4px;
         }
 
         .btn-mark-read {

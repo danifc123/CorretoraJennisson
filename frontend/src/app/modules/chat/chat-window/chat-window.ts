@@ -169,7 +169,7 @@ export class ChatWindow implements OnInit, OnDestroy, AfterViewChecked, OnChange
         const sorted = allMessages.sort((a, b) =>
           new Date(a.created_At).getTime() - new Date(b.created_At).getTime()
         );
-        console.log('Mensagens carregadas:', sorted.length, sorted);
+        console.log('Mensagens carregadas:', sorted.length);
         this.allMessages.set(sorted);
 
         // O effect() vai cuidar de filtrar as mensagens corretamente
@@ -387,14 +387,28 @@ export class ChatWindow implements OnInit, OnDestroy, AfterViewChecked, OnChange
   }
 
   isUsuarioMessage(mensagem: Mensagem): boolean {
-    // Para admin: mensagem de usuário é quando o remetente é Usuario
+    // Para admin: mensagem de usuário é quando o remetente é Usuario (tipo = 1 ou string 'Usuario')
     // Para usuário comum: mensagem de usuário é quando o usuario_Id é o mesmo do usuário logado
+
+    // CORREÇÃO: Backend está enviando como STRING ('Usuario' ou 'Administrador'), não como número
+    // Aceita tanto string quanto enum/número
+    const remetenteTipo = mensagem.remetente_Tipo;
+    const tipoString = String(remetenteTipo).toLowerCase();
+    const tipoNumero = Number(remetenteTipo);
+
+    // Verifica se é mensagem de usuário (aceita 'Usuario', 1, ou enum)
+    const isUsuarioTipo =
+      tipoString === 'usuario' ||
+      tipoNumero === 1 ||
+      remetenteTipo === RemetenteTipo.Usuario;
+
     if (this.isAdmin()) {
-      return mensagem.remetente_Tipo === RemetenteTipo.Usuario;
+      // Admin vê: mensagens de usuário devem ficar à ESQUERDA com cinza claro
+      return isUsuarioTipo;
     } else {
+      // Usuário comum: apenas suas próprias mensagens
       const currentUser = this.authService.getCurrentUser();
-      return mensagem.remetente_Tipo === RemetenteTipo.Usuario &&
-        mensagem.usuario_Id === currentUser?.userId;
+      return isUsuarioTipo && mensagem.usuario_Id === currentUser?.userId;
     }
   }
 
@@ -404,21 +418,35 @@ export class ChatWindow implements OnInit, OnDestroy, AfterViewChecked, OnChange
    * Mensagens do usuário mostram o nome do cliente
    */
   getSenderName(mensagem: Mensagem): string {
-    if (mensagem.remetente_Tipo === RemetenteTipo.Usuario) {
-      // Mensagem do usuário: usa o nome do usuário que vem do backend
-      if (mensagem.usuario_Nome) {
-        return mensagem.usuario_Nome;
+    // CORREÇÃO: Backend está enviando como STRING ('Usuario' ou 'Administrador')
+    // Aceita tanto string quanto enum/número
+    const remetenteTipo = mensagem.remetente_Tipo;
+    const tipoString = String(remetenteTipo).toLowerCase();
+    const tipoNumero = Number(remetenteTipo);
+
+    // Verifica se é mensagem de usuário
+    const isUsuario =
+      tipoString === 'usuario' ||
+      tipoNumero === 1 ||
+      remetenteTipo === RemetenteTipo.Usuario;
+
+    if (isUsuario) {
+      // Mensagem do USUÁRIO: mostra o nome do cliente
+      // PRIORIDADE 1: Usa o nome que vem do backend (campo usuario_Nome)
+      if (mensagem.usuario_Nome && mensagem.usuario_Nome.trim()) {
+        return mensagem.usuario_Nome.trim();
       }
 
-      // Fallback: usa o email como nome se não tiver nome
+      // PRIORIDADE 2: Fallback - usa o email como nome se não tiver nome
       if (mensagem.usuario_Email) {
         const nomeDoEmail = mensagem.usuario_Email.split('@')[0];
         return this.capitalizeFirst(nomeDoEmail);
       }
 
-      return 'Usuário';
+      // PRIORIDADE 3: Fallback final
+      return 'Cliente';
     } else {
-      // Mensagem do administrador: mostra "Você" (estilo WhatsApp)
+      // Mensagem do ADMINISTRADOR: mostra "Você" (estilo WhatsApp)
       return 'Você';
     }
   }

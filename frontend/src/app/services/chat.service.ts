@@ -16,7 +16,7 @@ export interface Mensagem {
   administrador_Id?: number;
   administrador_Nome?: string;
   conteudo: string;
-  remetente_Tipo: RemetenteTipo;
+  remetente_Tipo: RemetenteTipo | number | string; // Aceita enum, número ou string do backend
   lida: boolean;
   created_At: string;
 }
