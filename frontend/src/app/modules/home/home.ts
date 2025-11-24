@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
@@ -67,7 +67,8 @@ export class Home implements OnInit, OnDestroy {
 
   constructor(
     private imovelService: ImovelService,
-    private router: Router
+    private router: Router,
+    private cdRef: ChangeDetectorRef
   ) {}
 
   ngOnInit() {
@@ -320,11 +321,13 @@ export class Home implements OnInit, OnDestroy {
         this.featuredImoveis = disponiveis.slice(0, 3);
         this.atualizarTipos(imoveis);
         this.loadingFeatured = false;
+        this.cdRef.detectChanges();
       },
       error: (error) => {
         console.error('Erro ao carregar imóveis em destaque:', error);
         this.featuredError = 'Não foi possível carregar os imóveis em destaque no momento.';
         this.loadingFeatured = false;
+        this.cdRef.detectChanges();
       }
     });
   }

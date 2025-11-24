@@ -1,7 +1,7 @@
-@use '../../../styles/variables' as *;
+@use "../../../styles/variables" as *;
 
 .chat-button {
-  position: fixed;
+  position: fixed !important;
   bottom: 24px;
   right: 24px;
   width: 60px;
@@ -19,7 +19,6 @@
   justify-content: center;
   z-index: $z-index-fixed;
   transition: $transition;
-  position: relative;
 
   &:hover {
     background: rgba($secondary-color, 1);
@@ -65,7 +64,8 @@
 }
 
 @keyframes pulse {
-  0%, 100% {
+  0%,
+  100% {
     transform: scale(1);
   }
   50% {
@@ -74,7 +74,8 @@
 }
 
 @keyframes bounce {
-  0%, 100% {
+  0%,
+  100% {
     transform: translateY(0);
   }
   50% {
@@ -95,4 +96,3 @@
     }
   }
 }
-

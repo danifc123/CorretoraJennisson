@@ -278,8 +278,39 @@
 
       .property-actions {
         display: flex;
-        justify-content: space-between;
+        justify-content: flex-start;
         align-items: center;
+
+        .btn-primary {
+          display: inline-flex;
+          align-items: center;
+          color: white;
+          gap: $spacing-xs;
+          background: linear-gradient(135deg, $secondary-color 0%, $primary-color 100%);
+          border: none;
+          border-radius: 999px;
+          padding: $spacing-sm $spacing-xl;
+          font-weight: $font-weight-semibold;
+          text-decoration: none;
+          box-shadow: 0 10px 25px rgba($secondary-color, 0.25);
+          transition:
+            transform 0.2s ease,
+            box-shadow 0.2s ease;
+
+          .material-icons {
+            font-size: 20px;
+            transition: transform 0.2s ease;
+          }
+
+          &:hover {
+            transform: translateY(-2px) scale(1.01);
+            box-shadow: 0 15px 30px rgba($secondary-color, 0.35);
+
+            .material-icons {
+              transform: translateX(4px);
+            }
+          }
+        }
       }
     }
   }
