@@ -511,21 +511,88 @@
 
 // Call to Action (Marketing Digital) - dentro da galeria
 .gallery-section .cta-section {
+  .cta-buttons {
+    display: flex;
+    gap: $spacing-sm;
+    margin-bottom: $spacing-sm;
+    align-items: stretch;
+  }
+
+  // Botão WhatsApp (apenas ícone)
+  .cta-whatsapp {
+    width: 60px;
+    height: auto;
+    min-height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #25d366 0%, #128c7e 100%);
+    color: white;
+    border: none;
+    border-radius: $border-radius-lg;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 12px rgba(37, 211, 102, 0.3);
+    position: relative;
+    overflow: hidden;
+    flex-shrink: 0;
+
+    &::before {
+      content: "";
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.3);
+      transform: translate(-50%, -50%);
+      transition: width 0.6s, height 0.6s;
+    }
+
+    &:hover {
+      transform: translateY(-3px) scale(1.05);
+      box-shadow: 0 8px 20px rgba(37, 211, 102, 0.5);
+
+      &::before {
+        width: 300px;
+        height: 300px;
+      }
+
+      svg {
+        transform: scale(1.2) rotate(5deg);
+      }
+    }
+
+    &:active {
+      transform: translateY(-1px) scale(1.02);
+    }
+
+    svg {
+      width: 32px;
+      height: 32px;
+      position: relative;
+      z-index: 1;
+      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      fill: currentColor;
+    }
+  }
+
+  // Botão de Contato
   .cta-primary {
-    width: 100%;
+    flex: 1;
     display: flex;
     align-items: center;
     gap: $spacing-sm;
     padding: $spacing-md $spacing-lg;
-    background: linear-gradient(135deg, #25d366 0%, #128c7e 100%);
+    background: linear-gradient(135deg, $secondary-color 0%, $primary-color 100%);
     color: white;
     border: none;
     border-radius: $border-radius-lg;
     font-weight: $font-weight-bold;
     cursor: pointer;
     transition: $transition;
-    box-shadow: 0 8px 24px rgba(37, 211, 102, 0.3);
-    margin-bottom: $spacing-sm;
+    box-shadow: 0 4px 12px rgba($secondary-color, 0.3);
     position: relative;
     overflow: hidden;
 
@@ -542,7 +609,7 @@
 
     &:hover {
       transform: translateY(-2px);
-      box-shadow: 0 12px 32px rgba(37, 211, 102, 0.4);
+      box-shadow: 0 8px 20px rgba($secondary-color, 0.4);
 
       &::before {
         left: 100%;
@@ -555,11 +622,6 @@
 
     &:active {
       transform: translateY(0);
-    }
-
-    .material-icons:first-child {
-      font-size: 28px;
-      flex-shrink: 0;
     }
 
     .cta-content {

@@ -61,6 +61,34 @@ export class ImovelDetalhe implements OnInit {
     this.router.navigate(['/contato'], { queryParams: { imovel: this.imovel()!.id } });
   }
 
+  abrirWhatsApp(): void {
+    const imovel = this.imovel();
+    if (!imovel) return;
+
+    // Número do WhatsApp do corretor (mesmo usado na página de contato)
+    const numeroWhatsApp = '5583999199475'; // Formato: código do país + DDD + número (sem espaços ou caracteres especiais)
+
+    // URL completa do imóvel para o corretor acessar
+    const urlImovel = `${window.location.origin}/imoveis/${imovel.id}`;
+
+    // Mensagem pré-formatada sobre o imóvel (sem emojis)
+    const mensagem = `Olá! Tenho interesse no imóvel: ${imovel.titulo || 'Imóvel'}\n\n` +
+      `Localização: ${imovel.endereco}, ${imovel.cidade} - ${imovel.estado}\n` +
+      `Preço: ${this.formatarPreco(imovel.preco)}\n` +
+      `Tipo: ${imovel.tipoImovel}\n\n` +
+      `Link do imóvel: ${urlImovel}\n\n` +
+      `Gostaria de mais informações sobre este imóvel.`;
+
+    // Codifica a mensagem para URL
+    const mensagemEncoded = encodeURIComponent(mensagem);
+
+    // URL do WhatsApp Web/App
+    const urlWhatsApp = `https://wa.me/${numeroWhatsApp}?text=${mensagemEncoded}`;
+
+    // Abre o WhatsApp em nova aba
+    window.open(urlWhatsApp, '_blank');
+  }
+
   private carregarImovel(id: number): void {
     this.loading.set(true);
     this.errorMessage.set('');
