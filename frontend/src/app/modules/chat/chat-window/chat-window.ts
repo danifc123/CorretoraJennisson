@@ -65,10 +65,16 @@ export class ChatWindow implements OnInit, OnDestroy, AfterViewChecked, OnChange
     });
   }
 
-  ngOnChanges() {
-    // Atualiza o signal quando o @Input() muda
-    if (this.usuarioId !== this.usuarioIdSignal()) {
-      this.usuarioIdSignal.set(this.usuarioId);
+  ngOnChanges(changes: SimpleChanges) {
+    // Atualiza o signal quando o @Input() usuarioId muda
+    if (changes['usuarioId']) {
+      const newUsuarioId = changes['usuarioId'].currentValue;
+      const currentUsuarioId = this.usuarioIdSignal();
+
+      // Sempre atualiza se o valor mudou (incluindo undefined)
+      if (newUsuarioId !== currentUsuarioId) {
+        this.usuarioIdSignal.set(newUsuarioId);
+      }
     }
   }
 
@@ -301,17 +307,30 @@ export class ChatWindow implements OnInit, OnDestroy, AfterViewChecked, OnChange
       return;
     }
 
+    // Usa o valor atual do @Input() diretamente para evitar problemas de sincronização
+    const currentUsuarioId = this.usuarioId !== undefined ? this.usuarioId : this.usuarioIdSignal();
+
     // Se for admin, DEVE ter um usuarioId selecionado para enviar mensagem
-    if (this.isAdmin() && this.usuarioIdSignal() === undefined) {
+    if (this.isAdmin() && currentUsuarioId === undefined) {
       console.error('Admin tentou enviar mensagem sem selecionar um cliente');
       alert('Por favor, selecione um cliente para enviar a mensagem.');
       return;
     }
 
     // Se for admin e tiver um usuarioId selecionado, envia para aquele usuário
-    const usuarioIdDestino = this.isAdmin() && this.usuarioIdSignal() !== undefined
-      ? this.usuarioIdSignal()
+    const usuarioIdDestino = this.isAdmin() && currentUsuarioId !== undefined
+      ? currentUsuarioId
       : undefined;
+
+    // Log para debug
+    console.log('[ChatWindow.sendMessage]', {
+      isAdmin: this.isAdmin(),
+      usuarioIdInput: this.usuarioId,
+      usuarioIdSignal: this.usuarioIdSignal(),
+      currentUsuarioId,
+      usuarioIdDestino,
+      conteudo: conteudo.substring(0, 50)
+    });
 
     try {
       // Tenta enviar via SignalR se estiver conectado

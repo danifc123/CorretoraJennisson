@@ -79,17 +79,19 @@ import { AuthService } from '../../../services/auth.service';
         height: calc(100vh - 80px);
       }
 
+      .chat-layout {
+        max-width: 100%;
+      }
+
       .conversas-sidebar {
-        width: 100%;
-        display: none;
+        width: 35%;
+        min-width: 120px;
+        flex-shrink: 0;
       }
 
-      .chat-layout.show-chat .conversas-sidebar {
-        display: none;
-      }
-
-      .chat-layout.show-chat .chat-main {
-        display: block;
+      .chat-main {
+        flex: 1;
+        min-width: 0;
       }
     }
   `]
