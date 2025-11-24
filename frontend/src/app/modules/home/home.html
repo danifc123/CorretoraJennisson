@@ -24,7 +24,8 @@
                   aria-label="Selecione o tipo de imóvel"
                   title="Selecione o tipo de imóvel">
             <option value="">Tipo de Imóvel</option>
-            <option *ngFor="let tipo of availableTipos" [value]="tipo">
+            <option *ngFor="let tipo of availableTipos"
+                    [value]="tipo">
               {{ tipo }}
             </option>
           </select>
@@ -38,7 +39,7 @@
                  inputmode="numeric"
                  pattern="[0-9-]*"
                  (input)="onPriceRangeInput($event)"
-                 placeholder="Preço (ex: 30.000 - 50.000)" />
+                 placeholder="Preço ex: 30.000 - 50.000" />
         </div>
 
         <button type="submit"

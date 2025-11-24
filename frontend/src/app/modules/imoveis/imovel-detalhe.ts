@@ -1,7 +1,7 @@
 import { Component, OnInit, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ImovelService, Imovel } from '../../services/imovel.service';
+import { ImovelService, Imovel, StatusImovel } from '../../services/imovel.service';
 import { FavoritoService } from '../../services/favorito.service';
 import { AuthService } from '../../services/auth.service';
 import { AlertService } from '../../services/alert.service';

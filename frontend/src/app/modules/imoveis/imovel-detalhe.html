@@ -3,7 +3,9 @@
   <div class="alert alert-error">
     <span class="material-icons">error</span>
     <p>{{ errorMessage() }}</p>
-    <button type="button" class="btn-secondary" (click)="voltarParaLista()">
+    <button type="button"
+            class="btn-secondary"
+            (click)="voltarParaLista()">
       Voltar para imóveis
     </button>
   </div>
@@ -15,12 +17,17 @@
     <p>Carregando detalhes do imóvel...</p>
   </div>
   } @else if (imovel()) {
-  <div class="header">
-    <button type="button" class="btn-back" (click)="voltarParaLista()">
-      <span class="material-icons">arrow_back</span>
-      Voltar
-    </button>
-    <div class="header-actions">
+
+  <!-- Seção Principal -->
+  <section class="imovel-details">
+    <!-- Header com navegação -->
+    <div class="page-header">
+      <button type="button"
+              class="btn-back"
+              (click)="voltarParaLista()">
+        <span class="material-icons">arrow_back</span>
+        Voltar
+      </button>
       <button type="button"
               class="favorite-btn"
               [class.favorited]="isFavoritado()"
@@ -29,18 +36,36 @@
         <span class="material-icons">
           {{ isFavoritado() ? 'favorite' : 'favorite_border' }}
         </span>
-        {{ isFavoritado() ? 'Remover favorito' : 'Salvar favorito' }}
+        <span class="favorite-text">{{ isFavoritado() ? 'Salvo' : 'Favoritar' }}</span>
       </button>
     </div>
-  </div>
-
-  <section class="imovel-details">
-    <div class="gallery">
+    <!-- Galeria de Imagens -->
+    <div class="gallery-section">
       <div class="gallery-main">
         <img [src]="imagemAtual()"
              [alt]="imovel()?.titulo || 'Imagem do imóvel'"
              title="Imagem principal do imóvel"
              loading="lazy">
+        @if (imagens().length > 1) {
+        <div class="gallery-counter">
+          <span class="material-icons">photo_library</span>
+          <span>{{ galleryIndex() + 1 }} / {{ imagens().length }}</span>
+        </div>
+        <button type="button"
+                class="gallery-nav prev"
+                (click)="selecionarImagem(galleryIndex() - 1)"
+                [disabled]="galleryIndex() === 0"
+                aria-label="Imagem anterior">
+          <span class="material-icons">chevron_left</span>
+        </button>
+        <button type="button"
+                class="gallery-nav next"
+                (click)="selecionarImagem(galleryIndex() + 1)"
+                [disabled]="galleryIndex() === imagens().length - 1"
+                aria-label="Próxima imagem">
+          <span class="material-icons">chevron_right</span>
+        </button>
+        }
       </div>
       @if (imagens().length > 1) {
       <div class="gallery-thumbs">
@@ -48,9 +73,8 @@
         <button type="button"
                 [class.active]="galleryIndex() === i"
                 (click)="selecionarImagem(i)"
-                aria-label="Visualizar imagem adicional"
-                title="Visualizar imagem adicional">
-          <span class="sr-only">Ver imagem {{ i + 1 }}</span>
+                aria-label="Visualizar imagem {{ i + 1 }}"
+                title="Visualizar imagem {{ i + 1 }}">
           <img [src]="img.url"
                [alt]="'Imagem ' + (i + 1)"
                title="Miniatura do imóvel">
@@ -58,43 +82,79 @@
         }
       </div>
       }
+
+      <!-- Call to Action Principal (abaixo da foto) -->
+      <div class="cta-section">
+        <button type="button"
+                class="cta-primary"
+                (click)="irParaContato()">
+          <span class="material-icons">whatsapp</span>
+          <div class="cta-content">
+            <span class="cta-title">Falar com o Corretor</span>
+            <span class="cta-subtitle">Resposta rápida via WhatsApp</span>
+          </div>
+          <span class="material-icons cta-arrow">arrow_forward</span>
+        </button>
+        <div class="trust-badges">
+          <div class="trust-item">
+            <span class="material-icons">verified_user</span>
+            <span>Atendimento Confiável</span>
+          </div>
+          <div class="trust-item">
+            <span class="material-icons">schedule</span>
+            <span>Resposta em até 1h</span>
+          </div>
+        </div>
+      </div>
     </div>
 
-    <div class="info">
-      <h1>{{ imovel()?.titulo }}</h1>
-      <p class="location">
-        <span class="material-icons">location_on</span>
-        {{ imovel()?.endereco }}, {{ imovel()?.cidade }} - {{ imovel()?.estado }}
-      </p>
+    <!-- Informações do Imóvel -->
+    <div class="info-section">
+      <!-- Preço em Destaque -->
+      <div class="price-highlight">
+        <span class="price-label">Preço</span>
+        <span class="price-value">{{ imovel() ? formatarPreco(imovel()!.preco) : '' }}</span>
+      </div>
 
-      <div class="meta">
-        <div class="meta-item">
-          <span class="label">Tipo</span>
-          <strong>{{ imovel()?.tipoImovel }}</strong>
-        </div>
-        <div class="meta-item">
-          <span class="label">Status</span>
-          <strong>{{ imovel()?.status }}</strong>
-        </div>
-        <div class="meta-item">
-          <span class="label">Preço</span>
-          <strong class="price">{{ imovel() ? formatarPreco(imovel()!.preco) : '' }}</strong>
+      <!-- Título e Localização -->
+      <div class="header-info">
+        <h1>{{ imovel()?.titulo }}</h1>
+        <div class="location-info">
+          <span class="material-icons">location_on</span>
+          <span>{{ imovel()?.endereco }}, {{ imovel()?.cidade }} - {{ imovel()?.estado }}</span>
         </div>
       </div>
 
-      <div class="description">
-        <h2>Descrição</h2>
+      <!-- Informações Rápidas -->
+      <div class="quick-info">
+        <div class="info-card">
+          <span class="material-icons">home</span>
+          <div class="info-content">
+            <span class="info-label">Tipo</span>
+            <span class="info-value">{{ imovel()?.tipoImovel }}</span>
+          </div>
+        </div>
+        <div class="info-card">
+          <span class="material-icons">info</span>
+          <div class="info-content">
+            <span class="info-label">Status</span>
+            <span class="info-value status-badge"
+                  [class.status-disponivel]="imovel()?.status === 'Disponivel'">
+              {{ imovel()?.status }}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Descrição -->
+      <div class="description-section">
+        <h2>
+          <span class="material-icons">description</span>
+          Sobre o Imóvel
+        </h2>
         <p>{{ imovel()?.descricao }}</p>
-      </div>
-
-      <div class="cta">
-        <button type="button" class="btn-primary" (click)="irParaContato()">
-          <span class="material-icons">call</span>
-          Falar com o corretor
-        </button>
       </div>
     </div>
   </section>
   }
 </div>
-
