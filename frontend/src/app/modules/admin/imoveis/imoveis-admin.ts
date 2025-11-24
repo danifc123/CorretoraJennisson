@@ -33,7 +33,6 @@ export class ImoveisAdmin implements OnInit {
     estado: 'PB',
     cidade: 'João Pessoa',
     endereco: '',
-    status: StatusImovel.Disponivel,
     descricao: '',
     ativo: true,
     // Cômodos
@@ -53,14 +52,12 @@ export class ImoveisAdmin implements OnInit {
   // Filtros e busca
   searchTerm = signal('');
   tipoFiltro = signal<string>('');
-  statusFiltro = signal<StatusImovel | ''>('');
 
   // Dados carregados da API
   imoveis = signal<Imovel[]>([]);
 
   // Opções
   tipos = signal<string[]>([...DEFAULT_TIPOS_IMOVEL]);
-  statusOptions = Object.values(StatusImovel);
   estados = ['PB', 'PE', 'RN', 'CE', 'AL', 'SE', 'BA'];
   cidades = signal<string[]>([]);
 
@@ -172,9 +169,6 @@ export class ImoveisAdmin implements OnInit {
       );
     }
 
-    if (this.statusFiltro()) {
-      resultado = resultado.filter(imovel => imovel.status === this.statusFiltro());
-    }
 
     return resultado;
   });
@@ -213,7 +207,6 @@ export class ImoveisAdmin implements OnInit {
       cidade: 'João Pessoa',
       endereco: '',
       preco: undefined,
-      status: StatusImovel.Disponivel,
       descricao: '',
       ativo: true,
       // Cômodos
@@ -246,7 +239,6 @@ export class ImoveisAdmin implements OnInit {
       cidade: imovel.cidade,
       endereco: imovel.endereco,
       preco: imovel.preco,
-      status: imovel.status,
       descricao: imovel.descricao,
       ativo: imovel.ativo !== false,
       // Cômodos
@@ -298,7 +290,7 @@ export class ImoveisAdmin implements OnInit {
     // Validações
     if (!this.formData.titulo || !tipoNormalizado || !this.formData.cidade ||
         !this.formData.endereco || !this.formData.preco || !this.formData.descricao ||
-        !this.formData.estado || !this.formData.status) {
+        !this.formData.estado) {
       this.errorMessage.set('Por favor, preencha todos os campos obrigatórios.');
       this.scrollToTop();
       return;
@@ -320,7 +312,7 @@ export class ImoveisAdmin implements OnInit {
       cidade: this.formData.cidade!,
       endereco: this.formData.endereco!,
       preco: this.formData.preco!,
-      status: this.formData.status!,
+      status: StatusImovel.Disponivel, // Status padrão, não é mais editável
       descricao: this.formData.descricao!,
       ativo: this.formData.ativo ?? true,
       // Cômodos

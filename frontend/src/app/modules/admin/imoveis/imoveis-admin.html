@@ -90,21 +90,6 @@
           <small class="field-hint">Digite um novo tipo ou selecione um existente</small>
         </div>
 
-        <div class="form-group">
-          <label for="status">
-            <span class="material-icons">info</span>
-            Status *
-          </label>
-          <select id="status"
-                  [(ngModel)]="formData.status"
-                  name="status"
-                  [disabled]="loading()"
-                  required
-                  title="Selecione o status do imóvel"
-                  aria-label="Status do imóvel">
-            <option *ngFor="let status of statusOptions" [value]="status">{{ status }}</option>
-          </select>
-        </div>
 
         <div class="form-group toggle-field">
           <label>
@@ -456,14 +441,6 @@
       <option *ngFor="let tipo of tipos()" [value]="tipo">{{ tipo }}</option>
     </select>
 
-    <select class="filter-select"
-            [(ngModel)]="statusFiltro"
-            (ngModelChange)="statusFiltro.set($any($event))"
-            title="Filtrar por status"
-            aria-label="Filtrar por status">
-      <option value="">Todos os status</option>
-      <option *ngFor="let status of statusOptions" [value]="status">{{ status }}</option>
-    </select>
   </div>
 
   <!-- Lista de Imóveis -->
@@ -501,7 +478,6 @@
 
           <div class="imovel-features">
             <span><span class="material-icons">home</span> {{ imovel.tipoImovel }}</span>
-            <span><span class="material-icons">info</span> {{ imovel.status }}</span>
           </div>
 
           <div class="imovel-price">{{ formatarPreco(imovel.preco) }}</div>
