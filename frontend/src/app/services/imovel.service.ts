@@ -24,6 +24,14 @@ export interface Imovel {
   status: StatusImovel;
   tipoImovel: string;
   ativo?: boolean;
+  // Cômodos
+  salas?: number;
+  cozinhas?: number;
+  banheiros?: number;
+  suites?: number;
+  lavabos?: number;
+  garagemDescoberta?: number;
+  garagemCoberta?: number;
   created_at?: string;
   updated_at?: string;
   imagens?: ImagemImovel[];
@@ -46,6 +54,14 @@ export interface CreateImovelRequest {
   status: StatusImovel;
   tipoImovel: string;
   ativo?: boolean;
+  // Cômodos
+  salas?: number;
+  cozinhas?: number;
+  banheiros?: number;
+  suites?: number;
+  lavabos?: number;
+  garagemDescoberta?: number;
+  garagemCoberta?: number;
 }
 
 export interface UpdateImovelRequest extends Partial<CreateImovelRequest> {

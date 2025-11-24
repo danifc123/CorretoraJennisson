@@ -26,6 +26,27 @@ export class ImovelDetalhe implements OnInit {
   imagens = computed(() => this.imovel()?.imagens ?? []);
   imagemAtual = computed(() => this.imagens()[this.galleryIndex()]?.url ?? '/images/placeholder-imovel.jpg');
 
+  // Verifica se o imóvel tem cômodos cadastrados
+  temComodos = computed(() => {
+    const imovel = this.imovel();
+    if (!imovel) return false;
+    return !!(imovel.salas || imovel.cozinhas || imovel.banheiros || imovel.suites ||
+              imovel.lavabos || imovel.garagemDescoberta || imovel.garagemCoberta);
+  });
+
+  // Estado do accordion de cômodos
+  comodosAberto = signal(false);
+
+  // Toggle do accordion
+  toggleComodos(): void {
+    this.comodosAberto.update(val => !val);
+  }
+
+  // Helper para obter valor de cômodo de forma segura
+  getComodoValue(comodo: number | undefined): number {
+    return comodo ?? 0;
+  }
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
@@ -39,6 +60,9 @@ export class ImovelDetalhe implements OnInit {
   }
 
   ngOnInit(): void {
+    // Sempre inicia no topo da página ao carregar
+    window.scrollTo({ top: 0, behavior: 'instant' });
+
     const id = Number(this.route.snapshot.paramMap.get('id'));
     if (!id) {
       this.router.navigate(['/imoveis']);

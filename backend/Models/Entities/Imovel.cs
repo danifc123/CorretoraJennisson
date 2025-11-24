@@ -42,6 +42,15 @@ namespace CorretoraJenissonLuckwuAPI.Models.Entities
 
         public bool Ativo { get; set; } = true;
 
+        // Cômodos do imóvel
+        public int? Salas { get; set; }
+        public int? Cozinhas { get; set; }
+        public int? Banheiros { get; set; }
+        public int? Suites { get; set; }
+        public int? Lavabos { get; set; }
+        public int? GaragemDescoberta { get; set; }
+        public int? GaragemCoberta { get; set; }
+
         #endregion
 
         #region Generated Data (Backend logic)

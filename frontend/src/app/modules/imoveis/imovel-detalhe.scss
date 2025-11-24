@@ -478,6 +478,128 @@
   }
 }
 
+// Cômodos
+.comodos-section {
+  background: white;
+  border-radius: $border-radius-lg;
+  border: 2px solid $bg-secondary;
+  box-shadow: $shadow-sm;
+  overflow: hidden;
+
+  .comodos-header {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: $spacing-lg $spacing-xl;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    transition: $transition;
+    text-align: left;
+
+    &:hover {
+      background: rgba($secondary-color, 0.05);
+    }
+
+    &:focus {
+      outline: none;
+    }
+
+    &:focus-visible {
+      outline: none;
+    }
+
+    h2 {
+      display: flex;
+      align-items: center;
+      gap: $spacing-sm;
+      font-size: $font-size-xl;
+      font-weight: $font-weight-bold;
+      color: $primary-color;
+      margin: 0;
+
+      .material-icons {
+        font-size: 24px;
+        color: $secondary-color;
+      }
+    }
+
+    .expand-icon {
+      font-size: 28px;
+      color: $secondary-color;
+      transition: transform 0.3s ease;
+
+      &.expanded {
+        transform: rotate(180deg);
+      }
+    }
+  }
+
+  .comodos-content {
+    padding: 0 $spacing-xl $spacing-xl;
+    animation: slideDown 0.3s ease-out;
+  }
+
+  @keyframes slideDown {
+    from {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .comodos-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: $spacing-md;
+
+    @media (max-width: $breakpoint-sm) {
+      grid-template-columns: repeat(2, 1fr);
+      gap: $spacing-sm;
+    }
+
+    .comodo-item {
+      display: flex;
+      align-items: center;
+      gap: $spacing-sm;
+      padding: $spacing-sm $spacing-md;
+      background: $bg-secondary;
+      border-radius: $border-radius;
+      transition: $transition;
+
+      &:hover {
+        background: rgba($secondary-color, 0.1);
+        transform: translateY(-2px);
+        box-shadow: $shadow-sm;
+      }
+
+      .comodo-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 32px;
+        height: 32px;
+        font-size: 20px;
+        color: #64b5f6; // Azul clarinho característico
+        background: white;
+        border: 2px solid #64b5f6;
+        border-radius: 50%;
+        flex-shrink: 0;
+      }
+
+      .comodo-text {
+        font-size: $font-size-sm;
+        font-weight: $font-weight-medium;
+        color: $text-color;
+      }
+    }
+  }
+}
+
 // Descrição
 .description-section {
   padding: $spacing-xl;
@@ -547,7 +669,9 @@
       border-radius: 50%;
       background: rgba(255, 255, 255, 0.3);
       transform: translate(-50%, -50%);
-      transition: width 0.6s, height 0.6s;
+      transition:
+        width 0.6s,
+        height 0.6s;
     }
 
     &:hover {

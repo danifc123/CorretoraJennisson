@@ -57,6 +57,16 @@ namespace CorretoraJenissonLuckwuAPI.Repository
             imovelBanco.Status = imovel.Status;
             imovelBanco.TipoImovel = imovel.TipoImovel;
             imovelBanco.Ativo = imovel.Ativo;
+            
+            // Cômodos
+            imovelBanco.Salas = imovel.Salas;
+            imovelBanco.Cozinhas = imovel.Cozinhas;
+            imovelBanco.Banheiros = imovel.Banheiros;
+            imovelBanco.Suites = imovel.Suites;
+            imovelBanco.Lavabos = imovel.Lavabos;
+            imovelBanco.GaragemDescoberta = imovel.GaragemDescoberta;
+            imovelBanco.GaragemCoberta = imovel.GaragemCoberta;
+            
             imovelBanco.Updated_at = DateTime.UtcNow;
 
             _context.Imoveis.Update(imovelBanco);

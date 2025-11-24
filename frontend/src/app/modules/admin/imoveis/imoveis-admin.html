@@ -205,6 +205,116 @@
         </div>
       </div>
 
+      <!-- Cômodos -->
+      <div class="form-section-title">
+        <span class="material-icons">home</span>
+        Cômodos (Opcional)
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="salas">
+            <span class="material-icons">living</span>
+            Salas
+          </label>
+          <input type="number"
+                 id="salas"
+                 [(ngModel)]="formData.salas"
+                 name="salas"
+                 placeholder="0"
+                 min="0"
+                 [disabled]="loading()" />
+        </div>
+
+        <div class="form-group">
+          <label for="cozinhas">
+            <span class="material-icons">kitchen</span>
+            Cozinhas
+          </label>
+          <input type="number"
+                 id="cozinhas"
+                 [(ngModel)]="formData.cozinhas"
+                 name="cozinhas"
+                 placeholder="0"
+                 min="0"
+                 [disabled]="loading()" />
+        </div>
+
+        <div class="form-group">
+          <label for="banheiros">
+            <span class="material-icons">bathroom</span>
+            Banheiros
+          </label>
+          <input type="number"
+                 id="banheiros"
+                 [(ngModel)]="formData.banheiros"
+                 name="banheiros"
+                 placeholder="0"
+                 min="0"
+                 [disabled]="loading()" />
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="suites">
+            <span class="material-icons">bed</span>
+            Suítes
+          </label>
+          <input type="number"
+                 id="suites"
+                 [(ngModel)]="formData.suites"
+                 name="suites"
+                 placeholder="0"
+                 min="0"
+                 [disabled]="loading()" />
+        </div>
+
+        <div class="form-group">
+          <label for="lavabos">
+            <span class="material-icons">wc</span>
+            Lavabos
+          </label>
+          <input type="number"
+                 id="lavabos"
+                 [(ngModel)]="formData.lavabos"
+                 name="lavabos"
+                 placeholder="0"
+                 min="0"
+                 [disabled]="loading()" />
+        </div>
+
+        <div class="form-group">
+          <label for="garagemDescoberta">
+            <span class="material-icons">garage</span>
+            Garagem Descoberta
+          </label>
+          <input type="number"
+                 id="garagemDescoberta"
+                 [(ngModel)]="formData.garagemDescoberta"
+                 name="garagemDescoberta"
+                 placeholder="0"
+                 min="0"
+                 [disabled]="loading()" />
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="garagemCoberta">
+            <span class="material-icons">garage</span>
+            Garagem Coberta
+          </label>
+          <input type="number"
+                 id="garagemCoberta"
+                 [(ngModel)]="formData.garagemCoberta"
+                 name="garagemCoberta"
+                 placeholder="0"
+                 min="0"
+                 [disabled]="loading()" />
+        </div>
+      </div>
+
       <!-- Descrição -->
       <div class="form-section-title">
         <span class="material-icons">description</span>

@@ -35,7 +35,15 @@ export class ImoveisAdmin implements OnInit {
     endereco: '',
     status: StatusImovel.Disponivel,
     descricao: '',
-    ativo: true
+    ativo: true,
+    // Cômodos
+    salas: undefined,
+    cozinhas: undefined,
+    banheiros: undefined,
+    suites: undefined,
+    lavabos: undefined,
+    garagemDescoberta: undefined,
+    garagemCoberta: undefined
   };
 
   imagensSelecionadas = signal<File[]>([]);
@@ -207,7 +215,15 @@ export class ImoveisAdmin implements OnInit {
       preco: undefined,
       status: StatusImovel.Disponivel,
       descricao: '',
-      ativo: true
+      ativo: true,
+      // Cômodos
+      salas: undefined,
+      cozinhas: undefined,
+      banheiros: undefined,
+      suites: undefined,
+      lavabos: undefined,
+      garagemDescoberta: undefined,
+      garagemCoberta: undefined
     };
     this.imagensSelecionadas.set([]);
     this.imagensPreview.set([]);
@@ -232,7 +248,15 @@ export class ImoveisAdmin implements OnInit {
       preco: imovel.preco,
       status: imovel.status,
       descricao: imovel.descricao,
-      ativo: imovel.ativo !== false
+      ativo: imovel.ativo !== false,
+      // Cômodos
+      salas: imovel.salas,
+      cozinhas: imovel.cozinhas,
+      banheiros: imovel.banheiros,
+      suites: imovel.suites,
+      lavabos: imovel.lavabos,
+      garagemDescoberta: imovel.garagemDescoberta,
+      garagemCoberta: imovel.garagemCoberta
     };
     this.imagensSelecionadas.set([]);
     this.imagensPreview.set([]);
@@ -298,7 +322,15 @@ export class ImoveisAdmin implements OnInit {
       preco: this.formData.preco!,
       status: this.formData.status!,
       descricao: this.formData.descricao!,
-      ativo: this.formData.ativo ?? true
+      ativo: this.formData.ativo ?? true,
+      // Cômodos
+      salas: this.formData.salas,
+      cozinhas: this.formData.cozinhas,
+      banheiros: this.formData.banheiros,
+      suites: this.formData.suites,
+      lavabos: this.formData.lavabos,
+      garagemDescoberta: this.formData.garagemDescoberta,
+      garagemCoberta: this.formData.garagemCoberta
     };
 
     const editing = this.editingImovel();
