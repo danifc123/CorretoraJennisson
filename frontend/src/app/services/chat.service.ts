@@ -41,7 +41,9 @@ export interface Conversa {
   providedIn: 'root'
 })
 export class ChatService {
-  private readonly baseUrl = `${API_CONFIG.baseUrl}${API_CONFIG.endpoints.mensagens}`;
+  private get baseUrl(): string {
+    return `${API_CONFIG.baseUrl}${API_CONFIG.endpoints.mensagens}`;
+  }
 
   constructor(private http: HttpClient) {}
 

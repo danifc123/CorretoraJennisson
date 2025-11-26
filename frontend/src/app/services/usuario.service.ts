@@ -33,7 +33,10 @@ export interface UpdateUsuarioRequest {
   providedIn: 'root'
 })
 export class UsuarioService {
-  private readonly baseUrl = `${API_CONFIG.baseUrl}${API_CONFIG.endpoints.usuarios}`;
+  // Usa getter para garantir que a URL é calculada em runtime
+  private get baseUrl(): string {
+    return `${API_CONFIG.baseUrl}${API_CONFIG.endpoints.usuarios}`;
+  }
 
   constructor(private http: HttpClient) {}
 

@@ -34,7 +34,9 @@ export interface UpdateConteudoSiteRequest extends Partial<CreateConteudoSiteReq
   providedIn: 'root'
 })
 export class ConteudoSiteService {
-  private readonly baseUrl = `${API_CONFIG.baseUrl}${API_CONFIG.endpoints.conteudoSite}`;
+  private get baseUrl(): string {
+    return `${API_CONFIG.baseUrl}${API_CONFIG.endpoints.conteudoSite}`;
+  }
 
   constructor(private http: HttpClient) {}
 

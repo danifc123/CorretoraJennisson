@@ -20,7 +20,9 @@ export interface CreateFavoritoRequest {
   providedIn: 'root'
 })
 export class FavoritoService {
-  private readonly baseUrl = `${API_CONFIG.baseUrl}${API_CONFIG.endpoints.favoritos}`;
+  private get baseUrl(): string {
+    return `${API_CONFIG.baseUrl}${API_CONFIG.endpoints.favoritos}`;
+  }
 
   constructor(private http: HttpClient) {}
 

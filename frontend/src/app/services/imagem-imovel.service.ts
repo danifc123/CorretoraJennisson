@@ -19,7 +19,9 @@ export interface CreateImagemImovelRequest {
   providedIn: 'root'
 })
 export class ImagemImovelService {
-  private readonly baseUrl = `${API_CONFIG.baseUrl}${API_CONFIG.endpoints.imagens}`;
+  private get baseUrl(): string {
+    return `${API_CONFIG.baseUrl}${API_CONFIG.endpoints.imagens}`;
+  }
 
   constructor(private http: HttpClient) {}
 

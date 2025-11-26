@@ -37,7 +37,9 @@ export interface UpdateAdministradorRequest {
   providedIn: 'root'
 })
 export class AdministradorService {
-  private readonly baseUrl = `${API_CONFIG.baseUrl}${API_CONFIG.endpoints.administradores}`;
+  private get baseUrl(): string {
+    return `${API_CONFIG.baseUrl}${API_CONFIG.endpoints.administradores}`;
+  }
 
   constructor(private http: HttpClient) {}
 

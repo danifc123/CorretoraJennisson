@@ -72,7 +72,9 @@ export interface UpdateImovelRequest extends Partial<CreateImovelRequest> {
   providedIn: 'root'
 })
 export class ImovelService {
-  private readonly baseUrl = `${API_CONFIG.baseUrl}${API_CONFIG.endpoints.imoveis}`;
+  private get baseUrl(): string {
+    return `${API_CONFIG.baseUrl}${API_CONFIG.endpoints.imoveis}`;
+  }
 
   constructor(private http: HttpClient) {}
 
