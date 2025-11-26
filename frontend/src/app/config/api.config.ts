@@ -4,11 +4,11 @@
  */
 const isProduction = window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1';
 const API_BASE_URL = isProduction
-  ? 'https://corretora-jennisson-backend.onrender.com/api' // ⚠️ SUBSTITUA pela URL real do Render quando criar
+  ? 'https://corretorajennisson-backend.onrender.com/api'
   : 'http://localhost:5166/api';
 
 const CHAT_HUB_URL = isProduction
-  ? 'https://corretora-jennisson-backend.onrender.com/chathub' // ⚠️ SUBSTITUA pela URL real do Render quando criar
+  ? 'https://corretorajennisson-backend.onrender.com/chathub'
   : 'http://localhost:5166/chathub';
 
 export const API_CONFIG = {
