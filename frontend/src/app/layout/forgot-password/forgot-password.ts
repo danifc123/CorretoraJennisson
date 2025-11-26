@@ -2,6 +2,7 @@ import { Component, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-forgot-password',
@@ -20,7 +21,10 @@ export class ForgotPassword {
   successMessage = signal('');
   emailSent = signal(false);
 
-  constructor(private router: Router) {}
+  constructor(
+    private router: Router,
+    private authService: AuthService
+  ) {}
 
   /**
    * Envia link de recuperação de senha
@@ -41,20 +45,26 @@ export class ForgotPassword {
       return;
     }
 
-    // Simula loading
     this.loading.set(true);
 
-    // TODO: Implementar chamada para API
-    setTimeout(() => {
-      this.loading.set(false);
-      console.log('Recuperação de senha solicitada para:', this.email);
-
-      // Simula sucesso
-      this.emailSent.set(true);
-      this.successMessage.set(
-        'Link de recuperação enviado! Verifique sua caixa de entrada e spam.'
-      );
-    }, 2000);
+    this.authService.forgotPassword(this.email).subscribe({
+      next: (response) => {
+        console.log('Recuperação de senha solicitada para:', this.email, response);
+        this.emailSent.set(true);
+        this.successMessage.set(
+          response?.message ||
+            'Link de recuperação enviado! Verifique sua caixa de entrada e spam.'
+        );
+        this.loading.set(false);
+      },
+      error: (error) => {
+        console.error('Erro ao solicitar recuperação de senha:', error);
+        this.errorMessage.set(
+          error?.error ?? 'Ocorreu um erro ao solicitar a recuperação de senha.'
+        );
+        this.loading.set(false);
+      }
+    });
   }
 
   /**

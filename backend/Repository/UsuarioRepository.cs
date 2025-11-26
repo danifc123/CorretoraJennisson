@@ -80,6 +80,11 @@ namespace CorretoraJenissonLuckwuAPI.Repository
             return await _context.Usuarios
                 .FirstOrDefaultAsync(u => u.Stream_user_id == streamUserId);
         }
+
+        public async Task SaveChangesAsync()
+        {
+            await _context.SaveChangesAsync();
+        }
     }
 }
 

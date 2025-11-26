@@ -66,5 +66,10 @@ namespace CorretoraJenissonLuckwuAPI.Repository
 
             return administradorBanco;
         }
+
+        public async Task SaveChangesAsync()
+        {
+            await _context.SaveChangesAsync();
+        }
     }
 }

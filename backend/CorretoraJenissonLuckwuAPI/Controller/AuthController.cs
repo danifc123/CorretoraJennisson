@@ -15,6 +15,7 @@ namespace CorretoraJenissonLuckwuAPI.Controller
     private readonly UsuarioRepository _usuarioRepository;
     private readonly PasswordService _passwordService;
     private readonly AuthService _authService;
+    private readonly EmailService _emailService;
     private readonly IConfiguration _configuration;
     #endregion
 
@@ -24,13 +25,15 @@ namespace CorretoraJenissonLuckwuAPI.Controller
         UsuarioRepository usuarioRepository,
         PasswordService passwordService,
         AuthService authService,
-        IConfiguration configuration)
+        IConfiguration configuration,
+        EmailService emailService)
     {
       _administradorRepository = administradorRepository;
       _usuarioRepository = usuarioRepository;
       _passwordService = passwordService;
       _authService = authService;
       _configuration = configuration;
+      _emailService = emailService;
     }
     #endregion
 
@@ -121,6 +124,148 @@ namespace CorretoraJenissonLuckwuAPI.Controller
     public Task<ActionResult<LoginResponse>> RefreshToken(RefreshTokenRequest request)
     {
       return Task.FromResult<ActionResult<LoginResponse>>(BadRequest("Refresh token não implementado completamente. Use login novamente."));
+    }
+
+    /// <summary>
+    /// Inicia o fluxo de recuperação de senha enviando um e-mail com link de redefinição
+    /// </summary>
+    [HttpPost("forgot-password")]
+    public async Task<ActionResult<ForgotPasswordResponse>> ForgotPassword([FromBody] ForgotPasswordRequest request)
+    {
+      if (!ModelState.IsValid)
+      {
+        return BadRequest(ModelState);
+      }
+
+      try
+      {
+        var email = request.Email.Trim().ToLowerInvariant();
+
+        // Primeiro tenta encontrar como Administrador
+        var administrador = await _administradorRepository.GetByEmailAsync(email);
+        if (administrador != null)
+        {
+          var token = GenerateResetToken();
+          administrador.ResetPasswordToken = token;
+          administrador.ResetPasswordTokenExpiresAt = DateTime.UtcNow.AddHours(24);
+
+          await _administradorRepository.SaveChangesAsync();
+
+          await _emailService.SendPasswordResetEmailAsync(
+              administrador.Email,
+              administrador.Nome,
+              token,
+              "Admin");
+
+          return Ok(new ForgotPasswordResponse
+          {
+            Success = true,
+            Message = "Se o e-mail estiver cadastrado, você receberá um link para redefinir sua senha."
+          });
+        }
+
+        // Depois tenta encontrar como Usuário
+        var usuario = await _usuarioRepository.GetByEmailAsync(email);
+        if (usuario != null)
+        {
+          var token = GenerateResetToken();
+          usuario.ResetPasswordToken = token;
+          usuario.ResetPasswordTokenExpiresAt = DateTime.UtcNow.AddHours(24);
+
+          await _usuarioRepository.SaveChangesAsync();
+
+          await _emailService.SendPasswordResetEmailAsync(
+              usuario.Email!,
+              usuario.Nome,
+              token,
+              "User");
+        }
+
+        // Sempre retorna mensagem genérica para não vazar se o email existe ou não
+        return Ok(new ForgotPasswordResponse
+        {
+          Success = true,
+          Message = "Se o e-mail estiver cadastrado, você receberá um link para redefinir sua senha."
+        });
+      }
+      catch (Exception ex)
+      {
+        Console.WriteLine($"[ForgotPassword] ERRO: {ex.Message}");
+        Console.WriteLine($"Stack trace: {ex.StackTrace}");
+        return StatusCode(500, "Erro ao processar solicitação de recuperação de senha.");
+      }
+    }
+
+    /// <summary>
+    /// Conclui o fluxo de recuperação de senha atualizando a senha usando o token recebido por e-mail
+    /// </summary>
+    [HttpPost("reset-password")]
+    public async Task<ActionResult> ResetPassword([FromBody] ResetPasswordRequest request)
+    {
+      if (!ModelState.IsValid)
+      {
+        return BadRequest(ModelState);
+      }
+
+      try
+      {
+        var token = request.Token.Trim();
+        var now = DateTime.UtcNow;
+
+        // Tenta primeiro em Administradores
+        var admin = await _administradorRepository
+            .GetByIdAsync(
+                (await _administradorRepository.GetByEmailAsync("dummy"))?.Id ?? 0); // placeholder to satisfy compiler
+
+        // Como não temos método específico por token no repositório, usamos o DbContext via IdentifyUserType pattern:
+        // Por simplicidade e para evitar acoplamento forte aqui, vamos usar uma busca manual
+        // OBS: Em um projeto maior, o ideal seria criar métodos específicos no repositório.
+
+        // Busca admin por token
+        var db = HttpContext.RequestServices.GetRequiredService<CorretoraJenissonLuckwuAPI.EFModel.Configurations.CorretoraJenissonLuckwuDb>();
+        var administrador = db.Administradores
+            .FirstOrDefault(a =>
+                a.ResetPasswordToken == token &&
+                a.ResetPasswordTokenExpiresAt != null &&
+                a.ResetPasswordTokenExpiresAt > now);
+
+        if (administrador != null)
+        {
+          administrador.Senha = _passwordService.HashPassword(request.NewPassword);
+          administrador.ResetPasswordToken = null;
+          administrador.ResetPasswordTokenExpiresAt = null;
+          administrador.Updated_at = DateTime.UtcNow;
+
+          await db.SaveChangesAsync();
+          return Ok("Senha redefinida com sucesso.");
+        }
+
+        // Busca usuário por token
+        var usuario = db.Usuarios
+            .FirstOrDefault(u =>
+                u.ResetPasswordToken == token &&
+                u.ResetPasswordTokenExpiresAt != null &&
+                u.ResetPasswordTokenExpiresAt > now);
+
+        if (usuario != null)
+        {
+          usuario.Senha = _passwordService.HashPassword(request.NewPassword);
+          usuario.ResetPasswordToken = null;
+          usuario.ResetPasswordTokenExpiresAt = null;
+          usuario.Updated_at = DateTime.UtcNow;
+
+          await db.SaveChangesAsync();
+          return Ok("Senha redefinida com sucesso.");
+        }
+
+        return BadRequest("Token inválido ou expirado.");
+      }
+      catch (Exception ex)
+      {
+        Console.WriteLine($"[ResetPassword] ERRO: {ex.Message}");
+        Console.WriteLine($"Stack trace: {ex.StackTrace}");        
+        return StatusCode(500, "Erro ao redefinir senha.");
+      }
     }
 
     /// <summary>
@@ -218,6 +363,11 @@ namespace CorretoraJenissonLuckwuAPI.Controller
 
       response = BuildLoginResponse(0, email, "Admin");
       return true;
+    }
+
+    private string GenerateResetToken()
+    {
+      return $"{Guid.NewGuid():N}{Guid.NewGuid():N}";
     }
 
     private LoginResponse BuildLoginResponse(int userId, string email, string role)
