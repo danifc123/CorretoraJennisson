@@ -8,7 +8,9 @@ export const API_CONFIG = {
       loginAdmin: '/auth/login-administrador',
       loginUsuario: '/auth/login-usuario',
       refreshToken: '/auth/refresh-token',
-      identifyUserType: '/auth/identify-user-type'
+      identifyUserType: '/auth/identify-user-type',
+      forgotPassword: '/auth/forgot-password',
+      resetPassword: '/auth/reset-password'
     },
     imoveis: '/imovel',
     favoritos: '/favorito',

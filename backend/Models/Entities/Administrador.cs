@@ -23,6 +23,16 @@ namespace CorretoraJenissonLuckwuAPI.Models.Entities
         [Required]
         public string Senha { get; set; }
 
+        /// <summary>
+        /// Token para redefinição de senha (fluxo "Esqueci minha senha")
+        /// </summary>
+        public string? ResetPasswordToken { get; set; }
+
+        /// <summary>
+        /// Data/hora (UTC) de expiração do token de redefinição de senha
+        /// </summary>
+        public DateTime? ResetPasswordTokenExpiresAt { get; set; }
+
         // Stream_user_id comentado - será implementado no futuro para chatbot
         // [Required]
         public string? Stream_user_id { get; set; }

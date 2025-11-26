@@ -111,6 +111,9 @@ builder.Services.AddScoped<ConteudoSiteService>();
 builder.Services.AddScoped<FileStorageService>();
 builder.Services.AddScoped<MensagemService>();
 
+// Email / Resend
+builder.Services.AddHttpClient<EmailService>();
+
 // SignalR
 builder.Services.AddSignalR();
 

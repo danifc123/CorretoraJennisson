@@ -29,6 +29,15 @@ export interface UserTypeResponse {
   exists: boolean;
 }
 
+export interface ForgotPasswordRequest {
+  email: string;
+}
+
+export interface ForgotPasswordResponse {
+  success: boolean;
+  message: string;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -60,6 +69,17 @@ export class AuthService {
   ) {
     // Verifica se o token expirou ao inicializar
     this.checkTokenExpiration();
+  }
+
+  /**
+   * Solicita envio de link de recuperação de senha
+   */
+  forgotPassword(email: string): Observable<ForgotPasswordResponse> {
+    const payload: ForgotPasswordRequest = { email };
+    return this.http.post<ForgotPasswordResponse>(
+      `${API_CONFIG.baseUrl}${API_CONFIG.endpoints.auth.forgotPassword}`,
+      payload
+    );
   }
 
   /**
